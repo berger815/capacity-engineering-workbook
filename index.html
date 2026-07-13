@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A self-contained capacity and engineering planning workbook.">
-<title>Capacity &amp; Engineering Workbook v6.76</title>
+<title>Capacity &amp; Engineering Workbook v6.77</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-size:13px;}
@@ -31,13 +31,16 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;fo
 .nav-err-dot.on{display:block;}
 .pg{display:none;padding:20px 24px;}
 .pg.on{display:block;}
-.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:16px;}
-.guide-card{background:white;border:1px solid #e2e8f0;border-left:4px solid #4299e1;border-radius:8px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.06);}
-.guide-card h2{font-size:14px;margin-bottom:8px;color:#1a365d;}.guide-card h3{font-size:12px;margin:12px 0 5px;}
-.guide-card p,.guide-card li{font-size:12px;line-height:1.55;color:#4a5568}.guide-card ul,.guide-card ol{padding-left:20px;}
-.guide-card li+li{margin-top:4px}.guide-card.warn{border-left-color:#d69e2e}.guide-card.safe{border-left-color:#38a169}.guide-card.lt{border-left-color:#805ad5}
-.guide-steps{counter-reset:guide-step;list-style:none!important;padding-left:0!important}.guide-steps li{counter-increment:guide-step;padding-left:34px;position:relative;min-height:26px}.guide-steps li:before{content:counter(guide-step);position:absolute;left:0;top:0;width:23px;height:23px;border-radius:50%;background:#2b6cb0;color:white;text-align:center;line-height:23px;font-weight:700;font-size:11px}
-.guide-table{width:100%;border-collapse:collapse}.guide-table th,.guide-table td{padding:7px 8px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:11px;vertical-align:top}.guide-table th{background:#1a1a2e;color:white}
+.guide-shell{max-width:1240px;margin:0 auto}.guide-hero{background:linear-gradient(135deg,#1a365d,#44337a);color:white;border-radius:10px;padding:22px 24px;margin-bottom:14px;box-shadow:0 4px 12px rgba(26,54,93,.2)}
+.guide-hero h1{font-size:21px;margin-bottom:6px}.guide-hero p{font-size:12px;line-height:1.6;color:#e9d8fd;max-width:850px}.guide-hero-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.guide-hero .guide-badge{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);border-radius:14px;padding:3px 9px;font-size:10px;font-weight:700;margin:8px 5px 0 0}
+.guide-toolbar{position:sticky;top:0;z-index:10;background:#f0f2f5;padding:8px 0 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.guide-search{flex:1;min-width:220px;border:1px solid #a0aec0;border-radius:6px;padding:9px 11px;font-size:12px;background:white}.guide-search:focus{outline:none;border-color:#4299e1;box-shadow:0 0 0 2px rgba(66,153,225,.2)}.guide-search-count{font-size:10px;color:#718096;min-width:80px}
+.guide-overview{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.guide-overview-card{background:white;border-radius:8px;padding:14px 16px;border-top:4px solid #4299e1;box-shadow:0 2px 6px rgba(0,0,0,.06)}.guide-overview-card:nth-child(2){border-top-color:#805ad5}.guide-overview-card:nth-child(3){border-top-color:#38a169}.guide-overview-card h2{font-size:13px;margin-bottom:5px}.guide-overview-card p{font-size:11px;line-height:1.5;color:#4a5568}
+.guide-workflow{background:white;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:14px;box-shadow:0 2px 6px rgba(0,0,0,.06)}.guide-workflow h2{font-size:15px;color:#1a365d;margin-bottom:3px}.guide-workflow>.sub{font-size:11px;color:#718096;margin-bottom:12px}.guide-step-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.guide-step{border:1px solid #e2e8f0;border-radius:7px;padding:10px;background:#f7fafc;min-height:132px;display:flex;flex-direction:column}.guide-step-num{width:24px;height:24px;border-radius:50%;background:#2b6cb0;color:white;font-weight:800;font-size:11px;line-height:24px;text-align:center;margin-bottom:6px}.guide-step h3{font-size:11px;margin-bottom:4px}.guide-step p{font-size:10px;line-height:1.45;color:#4a5568;flex:1}.guide-go{border:1px solid #bee3f8;background:#ebf8ff;color:#2b6cb0;border-radius:4px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;margin-top:7px;text-align:center}.guide-go:hover{background:#bee3f8}
+.guide-sections{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}.guide-section{background:white;border:1px solid #e2e8f0;border-left:4px solid #4299e1;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.05);overflow:hidden}.guide-section.lt{border-left-color:#805ad5}.guide-section.warn{border-left-color:#d69e2e}.guide-section.safe{border-left-color:#38a169}.guide-section-head{width:100%;border:0;background:white;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;cursor:pointer}.guide-section-head:hover{background:#f7fafc}.guide-section-title{font-size:13px;font-weight:800;color:#1a365d}.guide-section-kicker{font-size:10px;color:#718096;margin-top:2px}.guide-chevron{font-size:15px;color:#718096;transition:transform .2s}.guide-section.open .guide-chevron{transform:rotate(180deg)}.guide-section-body{display:none;padding:0 16px 16px}.guide-section.open .guide-section-body{display:block}.guide-section-body h3{font-size:12px;color:#2d3748;margin:13px 0 5px}.guide-section-body h4{font-size:11px;color:#4a5568;margin:10px 0 4px}.guide-section-body p,.guide-section-body li{font-size:11px;line-height:1.58;color:#4a5568}.guide-section-body ul,.guide-section-body ol{padding-left:20px}.guide-section-body li+li{margin-top:4px}
+.guide-table{width:100%;border-collapse:collapse;margin-top:8px}.guide-table th,.guide-table td{padding:7px 8px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:10px;vertical-align:top}.guide-table th{background:#1a1a2e;color:white}.guide-table td:first-child{font-weight:700;color:#2d3748}.guide-table code{font-size:10px}
+.guide-callout{border-radius:6px;padding:9px 11px;margin:9px 0;font-size:11px;line-height:1.5;background:#ebf8ff;border:1px solid #bee3f8}.guide-callout.warn{background:#fffff0;border-color:#faf089}.guide-callout.danger{background:#fff5f5;border-color:#fed7d7}.guide-callout.good{background:#f0fff4;border-color:#c6f6d5}.guide-formula{background:#1a1a2e;color:#e2e8f0;border-radius:6px;padding:9px 11px;margin:7px 0;font-family:Consolas,monospace;font-size:10px;overflow-x:auto}.guide-formula b{color:#90cdf4}.guide-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.guide-example-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:10px 0}.guide-example-node{background:#f7fafc;border:1px solid #e2e8f0;border-radius:7px;padding:9px;text-align:center;position:relative}.guide-example-node:not(:last-child):after{content:'→';position:absolute;right:-9px;top:36%;z-index:2;color:#805ad5;font-weight:800}.guide-example-node .n{font-size:15px;font-weight:800;color:#2b6cb0}.guide-example-node .l{font-size:9px;color:#718096;margin-top:3px}.guide-checklist{display:grid;grid-template-columns:1fr 1fr;gap:5px 14px}.guide-check{font-size:11px;color:#4a5568;padding:5px 0;border-bottom:1px solid #edf2f7}.guide-check:before{content:'□';font-size:15px;color:#38a169;margin-right:7px;vertical-align:-1px}.guide-chip{display:inline-block;border-radius:12px;padding:3px 8px;margin:2px;background:#edf2f7;color:#4a5568;font-size:9px;font-weight:700}.guide-no-results{display:none;background:#fffff0;border:1px solid #faf089;border-radius:7px;padding:16px;text-align:center;color:#975a16;font-size:12px}.guide-version{font-size:10px;color:#718096;text-align:right;margin-top:8px}
+@media(max-width:900px){.guide-step-grid{grid-template-columns:repeat(2,1fr)}.guide-example-flow{grid-template-columns:1fr}.guide-example-node:not(:last-child):after{content:'↓';right:auto;left:49%;top:auto;bottom:-12px}.guide-overview{grid-template-columns:1fr}.guide-two{grid-template-columns:1fr}}
+@media(max-width:520px){.guide-step-grid{grid-template-columns:1fr}.guide-checklist{grid-template-columns:1fr}.guide-hero{padding:18px}.guide-hero h1{font-size:18px}.guide-toolbar{position:static}.guide-section-head{padding:12px}.guide-section-body{padding:0 12px 12px}}
 .card{background:white;border-radius:8px;padding:16px 20px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.08);border-left:4px solid #63b3ed;}
 .card.red{border-left-color:#e53e3e;}.card.grn{border-left-color:#38a169;}.card.ylw{border-left-color:#d69e2e;}.card.pur{border-left-color:#805ad5;}.card.org{border-left-color:#dd6b20;}.card.tel{border-left-color:#319795;}.card.pnk{border-left-color:#d53f8c;}.card.dark{border-left-color:#1a1a2e;}.card.lt-card{border-left-color:#6b46c1;}
 .card h2{font-size:13px;font-weight:700;margin-bottom:2px;}
@@ -305,7 +308,7 @@ input[type=number].ni{text-align:right;}
 <body>
 <div class="hdr">
   <div class="hdr-left">
-    <h1 id="hdr_title">Capacity &amp; Engineering Workbook v6.76</h1>
+    <h1 id="hdr_title">Capacity &amp; Engineering Workbook v6.77</h1>
     <div class="sub" id="hdr_sub">Capacity Planning</div>
     <div class="hdr-save-meta" id="hdr_save_ts"></div>
   </div>
@@ -387,17 +390,171 @@ input[type=number].ni{text-align:right;}
 </div>
 
 <div id="pGuide" class="pg">
-  <div class="infobox ib-b" style="margin-bottom:16px"><b>📘 User Guide — Capacity &amp; Engineering Workbook v6.76</b><br>This workbook runs entirely in one browser page. Your working data stays in this browser unless you export and share a JSON backup.</div>
-  <div class="guide-grid">
-    <section class="guide-card safe"><h2>Quick Start</h2><ol class="guide-steps"><li>Enter organization details, product lines, departments, and checklist items on <b>Setup</b>.</li><li>Generate the workbook. Regenerating intentionally clears downstream entries.</li><li>Enter delivery quantities on <b>Demand</b> using annual, quarterly, or monthly resolution.</li><li>Enter capacity, standard hours, efficiency, and optional demonstrated capacity.</li><li>Configure phases and department assignments on <b>Lead Times</b>.</li><li>Review Utilization, Gap Chart, Headcount, Recovery, and Executive Summary.</li><li>Use <b>Export</b> regularly to create a portable backup.</li></ol></section>
-    <section class="guide-card"><h2>Demand Resolution</h2><table class="guide-table"><tr><th>Mode</th><th>Use</th></tr><tr><td>Annual</td><td>Long-range totals. If no sub-annual schedule exists, calculations distribute annual demand evenly for period views.</td></tr><tr><td>Quarterly</td><td>Seasonal planning by quarter. Each quarter is divided evenly when a monthly calculation is required.</td></tr><tr><td>Monthly</td><td>Most precise timing. Once a product/year has monthly entries, blank months mean zero.</td></tr></table><h3>Important</h3><p>Demand is always entered at the delivery or ship date. Lead-time settings move capacity work earlier without changing the original forecast.</p></section>
-    <section class="guide-card lt"><h2>Lead Time and Spread</h2><ul><li><b>Start Week</b> is how many weeks before delivery the phase begins.</li><li><b>End Week</b> is where that phase finishes before delivery.</li><li><b>LT Adjust OFF:</b> capacity is shown at delivery timing.</li><li><b>LT Adjust ON, Spread OFF:</b> the full phase load is placed at its start-by month.</li><li><b>Spread ON:</b> hours are distributed evenly across the phase window from Start Week to End Week.</li><li>A valid phase requires Start Week &gt; End Week, values from 0–260, and a department assignment.</li></ul><p style="margin-top:8px">A phase can cross a calendar boundary. A four-week phase may therefore touch one or two months, but its total hours must remain unchanged.</p></section>
-    <section class="guide-card warn"><h2>Forecast Boundaries</h2><p>Lead-time work may occur before the first forecast month. Those hours cannot be displayed inside the selected horizon. The Utilization tab warns when work is clipped.</p><h3>Best practice</h3><ul><li>Start the forecast early enough to include the longest lead time.</li><li>Add a buffer year when planning long phases.</li><li>Resolve every red Lead Time warning before relying on capacity results.</li></ul></section>
-    <section class="guide-card"><h2>How Capacity Is Calculated</h2><p><b>Required hours</b> = Demand × Standard Hours × (1 + Rework%) × Office Copy Factor.</p><p style="margin-top:6px"><b>Available hours</b> use demonstrated capacity when supplied; otherwise Base Hours × Efficiency or OEE.</p><table class="guide-table" style="margin-top:8px"><tr><th>RAG</th><th>Meaning</th></tr><tr><td>Green</td><td>Below 85% utilization</td></tr><tr><td>Yellow</td><td>85% through 100%</td></tr><tr><td>Red</td><td>Above 100%</td></tr></table></section>
-    <section class="guide-card"><h2>Tabs at a Glance</h2><ul><li><b>Base Capacity:</b> theoretical or demonstrated available hours.</li><li><b>Std Hours &amp; Inputs:</b> routing hours, copy factors, floor space, and dwell.</li><li><b>Efficiency &amp; OEE:</b> availability losses, rework, and optional OEE.</li><li><b>Utilization:</b> period load, capacity, utilization, and gap.</li><li><b>Gap Chart:</b> demand versus capacity visualization.</li><li><b>Scenarios &amp; Recovery:</b> capacity scenarios and dated milestones.</li><li><b>Footprint / Headcount:</b> facility and staffing requirements.</li><li><b>Action Log / Exec Summary:</b> ownership and management output.</li></ul></section>
-    <section class="guide-card safe"><h2>Saving and Sharing</h2><ul><li>Autosave uses browser storage after the workbook is generated.</li><li><b>Export</b> downloads a JSON backup containing workbook data.</li><li><b>Import</b> replaces the current workbook after validation and confirmation.</li><li>Only import files from people you trust.</li><li>Clearing saved data removes both workbook data and saved commentary from this browser.</li></ul><p style="margin-top:8px"><b>Recommended:</b> export after major planning sessions and before regenerating the workbook.</p></section>
-    <section class="guide-card"><h2>Footprint &amp; Warehouse</h2><ul><li>Production space is measured in <b>square feet</b>.</li><li>Warehouse capacity defaults to <b>cubic feet</b> and may be changed to pallet positions by warehouse department.</li><li>Monthly demand drives WIP and inventory peaks; annual-only demand is evenly distributed across months.</li><li>Dwell Days are working days. Space requirements use the simultaneous product mix in each month.</li><li>Production and warehouse units are never added together.</li></ul></section>
-    <section class="guide-card warn"><h2>Troubleshooting</h2><ul><li><b>Monthly totals look low:</b> confirm whether blank months are intentionally zero.</li><li><b>Load moved earlier:</b> check the department’s phase assignment and Start Week.</li><li><b>Summary and detail differ:</b> refresh the page and confirm you are on v6.76 or later.</li><li><b>Footprint incomplete:</b> enter both Dwell Days and Space/Unit for every product with demand.</li><li><b>Hours clipped:</b> extend the forecast start earlier.</li><li><b>Autosave failed:</b> export immediately; browser storage may be full.</li><li><b>Old page after deployment:</b> reload or open the page with a fresh query string.</li></ul></section>
+  <div class="guide-shell">
+    <div class="guide-hero">
+      <h1>📘 Capacity &amp; Engineering Workbook — Operating Guide</h1>
+      <p>Use this guide to build a defensible capacity model, understand how each calculation works, verify that the inputs are complete, and translate the result into an executable recovery plan. The workbook remains one self-contained browser file; working data stays in this browser until exported.</p>
+      <span class="guide-badge">v6.77</span><span class="guide-badge">Single-file</span><span class="guide-badge">LT phase aware</span><span class="guide-badge">Monthly footprint</span>
+      <div class="guide-hero-actions"><button class="btn btn-bl" onclick="guideGo('p0','nav_p0')">Start a Workbook</button><button class="btn btn-pu" onclick="guideOpenSection('guide_example')">Open Worked Example</button><button class="btn btn-gn" onclick="guideOpenSection('guide_readiness')">Model Readiness</button></div>
+    </div>
+
+    <div class="guide-toolbar">
+      <input class="guide-search" id="guide_search" type="search" placeholder="Search the guide: spread, OEE, dwell, import, headcount..." oninput="guideSearch(this.value)">
+      <button class="btn btn-gy" onclick="guideExpandAll(true)">Expand All</button><button class="btn btn-gy" onclick="guideExpandAll(false)">Collapse All</button><button class="btn btn-bl" onclick="guideResetSearch()">Clear Search</button><span class="guide-search-count" id="guide_search_count">11 sections</span>
+    </div>
+
+    <div class="guide-overview">
+      <div class="guide-overview-card"><h2>1. Build the facts</h2><p>Define delivery demand, usable capacity, routing hours, efficiency, lead-time phases, space, and staffing assumptions.</p></div>
+      <div class="guide-overview-card"><h2>2. Validate the model</h2><p>Resolve missing inputs, invalid phase mappings, clipped work, capacity-source questions, and unit mismatches before relying on RAG results.</p></div>
+      <div class="guide-overview-card"><h2>3. Decide and act</h2><p>Use utilization, gap, footprint, headcount, scenarios, milestones, and the Action Log to create an owned recovery plan.</p></div>
+    </div>
+
+    <div class="guide-workflow">
+      <h2>Recommended Workflow</h2><div class="sub">Complete the model from left to right. Optional inputs improve precision, but missing required inputs can make a green result meaningless.</div>
+      <div class="guide-step-grid">
+        <div class="guide-step"><div class="guide-step-num">1</div><h3>Setup</h3><p>Name the assessment, define product lines, classify departments, and customize readiness items. Generate once the structure is correct.</p><button class="guide-go" onclick="guideGo('p0','nav_p0')">Go to Setup</button></div>
+        <div class="guide-step"><div class="guide-step-num">2</div><h3>Delivery Demand</h3><p>Enter annual, quarterly, or monthly ship quantities. Use monthly demand when seasonality or specific launch timing matters.</p><button class="guide-go" onclick="guideGo('p1','nav_p1')">Go to Demand</button></div>
+        <div class="guide-step"><div class="guide-step-num">3</div><h3>Capacity Basis</h3><p>Enter FTE and hours, or a demonstrated annual capacity. Confirm the constraint and document the source.</p><button class="guide-go" onclick="guideGo('p2','nav_p2')">Go to Base Capacity</button></div>
+        <div class="guide-step"><div class="guide-step-num">4</div><h3>Routing &amp; Space</h3><p>Enter standard hours for every product/department combination. Add copy factor, space per unit, and dwell where applicable.</p><button class="guide-go" onclick="guideGo('p3','nav_p3')">Go to Inputs</button></div>
+        <div class="guide-step"><div class="guide-step-num">5</div><h3>Efficiency &amp; LT</h3><p>Define losses or OEE, rework, phase windows, and one department assignment per product line.</p><button class="guide-go" onclick="guideGo('pLT','nav_pLT')">Go to Lead Times</button></div>
+        <div class="guide-step"><div class="guide-step-num">6</div><h3>Validate Results</h3><p>Review utilization and gaps at the resolution used for decisions. Investigate every yellow/red result and every warning.</p><button class="guide-go" onclick="guideGo('p5','nav_p5')">Go to Utilization</button></div>
+        <div class="guide-step"><div class="guide-step-num">7</div><h3>Resources &amp; Recovery</h3><p>Check footprint/storage and headcount. Model scenarios, date milestones, and assign actions to close the gaps.</p><button class="guide-go" onclick="guideGo('p7','nav_p7')">Go to Recovery</button></div>
+        <div class="guide-step"><div class="guide-step-num">8</div><h3>Communicate &amp; Save</h3><p>Review the Executive Summary, add management commentary, export a JSON backup, and record the model version.</p><button class="guide-go" onclick="guideGo('p11','nav_p11')">Go to Exec Summary</button></div>
+      </div>
+    </div>
+
+    <div class="guide-no-results" id="guide_no_results">No guide sections match that search. Try a shorter term such as “spread,” “capacity,” “space,” or “save.”</div>
+    <div class="guide-sections" id="guide_sections">
+      <section class="guide-section open safe" id="guide_example" data-guide="worked example demand hours rework spread utilization footprint dwell square feet">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="true"><span><span class="guide-section-title">Worked Example — Trace One Delivery Through the Workbook</span><span class="guide-section-kicker">A complete numerical example from ship demand to hours, utilization, and floor space</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <div class="guide-callout good"><b>Example assumptions:</b> Product A has 120 units due in June. Testing requires 2.0 standard hours/unit, rework is 5%, usable capacity is 180 hours/month, the Testing phase is 4→0 weeks before delivery, dwell is 5 working days, peak factor is 1.2, and production space is 3 sq ft/unit.</div>
+          <div class="guide-example-flow"><div class="guide-example-node"><div class="n">120</div><div class="l">June delivery units</div></div><div class="guide-example-node"><div class="n">240 h</div><div class="l">120 × 2.0 standard hours</div></div><div class="guide-example-node"><div class="n">252 h</div><div class="l">240 × 1.05 rework</div></div><div class="guide-example-node"><div class="n">140%</div><div class="l">252 ÷ 180 if placed in one month</div></div><div class="guide-example-node"><div class="n">108 ft²</div><div class="l">Monthly peak footprint</div></div></div>
+          <h3>What LT Adjust changes</h3><p>With LT Adjust OFF, the 252 required hours remain at June delivery timing. With LT Adjust ON and Spread OFF, all 252 hours move to the Testing phase start-by month. With Spread ON, the same 252 hours are distributed across the true 4→0 week phase window. A calendar boundary may place portions in one or two months, but the total remains 252 hours.</p>
+          <h3>Footprint calculation</h3><div class="guide-formula"><b>Average WIP</b> = 120 units × 5 dwell days ÷ 20 working days/month = 30 units<br><b>Peak WIP</b> = 30 × 1.2 = 36 units<br><b>Required area</b> = 36 × 3 sq ft/unit = 108 sq ft</div>
+          <div class="guide-callout warn"><b>Interpretation:</b> Capacity load follows the department’s phase timing when LT Adjust is enabled. Footprint intentionally uses ship-date monthly demand and dwell. These are related but different planning questions.</div>
+        </div>
+      </section>
+
+      <section class="guide-section" id="guide_demand" data-guide="demand annual quarterly monthly resolution fallback ship delivery blank zero seasonal">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Demand &amp; Resolution</span><span class="guide-section-kicker">How forecasts are entered, inherited, and converted between annual, quarterly, and monthly views</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <table class="guide-table"><thead><tr><th>Resolution</th><th>Best use</th><th>Calculation behavior</th></tr></thead><tbody><tr><td>Annual</td><td>Long-range strategy and early estimates</td><td>When a monthly calculation is required, the annual quantity is distributed evenly across 12 months.</td></tr><tr><td>Quarterly</td><td>Known seasonal shape without monthly detail</td><td>Each quarter is divided evenly across its three months.</td></tr><tr><td>Monthly</td><td>Launches, shutdowns, seasonality, and operational decisions</td><td>Once a product/year has monthly demand, those months are authoritative; blank months mean zero.</td></tr></tbody></table>
+          <h3>Source precedence</h3><div class="guide-formula"><b>Monthly schedule</b> → otherwise <b>Quarterly ÷ 3</b> → otherwise <b>Annual ÷ 12</b></div>
+          <ul><li>Enter demand at the customer delivery or ship date—not the department start date.</li><li>Changing to a finer resolution can distribute missing schedules, but existing detailed schedules are preserved.</li><li>Use “Redistribute Annual” only when you intend to overwrite the current sub-annual shape.</li><li>Totals should reconcile back to the ship-year forecast; LT timing changes work placement, not the original demand.</li></ul>
+          <button class="guide-go" onclick="guideGo('p1','nav_p1')">Go to Demand</button>
+        </div>
+      </section>
+
+      <section class="guide-section lt" id="guide_lt" data-guide="lead time phase start week end week spread shift clip boundary assignment mapping">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Lead Times, Phases &amp; Spread</span><span class="guide-section-kicker">The difference between ship timing, start-by timing, and distributing work through a phase</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <table class="guide-table"><thead><tr><th>Setting</th><th>Result</th></tr></thead><tbody><tr><td>LT Adjust OFF</td><td>Required hours remain at delivery timing.</td></tr><tr><td>LT Adjust ON / Spread OFF</td><td>The full phase load is placed at Delivery Date − Start Week.</td></tr><tr><td>LT Adjust ON / Spread ON</td><td>Required hours are distributed uniformly through the phase window from Start Week to End Week.</td></tr></tbody></table>
+          <h3>Valid phase rules</h3><ul><li>Start Week must be greater than End Week.</li><li>Week values must be between 0 and 260.</li><li>Every department must be assigned to exactly one valid phase for every product line.</li><li>Deleting a referenced phase creates an orphaned assignment that must be corrected.</li></ul>
+          <div class="guide-callout warn"><b>Forecast boundary:</b> Work shifted before the first forecast month cannot be displayed. The Utilization tab reports clipped hours. Add an earlier buffer year when the longest lead time approaches the horizon boundary.</div>
+          <div class="guide-callout"><b>Four-week phase:</b> Four weeks is not the same as one named calendar month. Depending on the delivery boundary, a 4→0 week phase can touch one or two months. Spread conserves total hours.</div>
+          <button class="guide-go" onclick="guideGo('pLT','nav_pLT')">Go to Lead Times</button>
+        </div>
+      </section>
+
+      <section class="guide-section" id="guide_capacity" data-guide="capacity standard hours efficiency oee demonstrated theoretical rework copy factor utilization rag">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Capacity, Standard Hours, Efficiency &amp; Utilization</span><span class="guide-section-kicker">The calculation chain behind required load, available hours, and RAG status</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <div class="guide-two"><div><h3>Required load</h3><div class="guide-formula"><b>Required Hours</b> = Demand × Standard Hours × (1 + Rework%) × Office Copy Factor</div><p>Copy Factor applies only to Office departments. A 50% factor means only half the product demand generates that office activity.</p></div><div><h3>Available capacity</h3><div class="guide-formula"><b>Theoretical</b> = Base Hours × Efficiency%<br><b>OEE</b> = Availability × Performance × Quality<br><b>Demonstrated</b> = entered annual demonstrated hours</div><p>Demonstrated capacity overrides theoretical capacity when populated and is marked <b>[D]</b>. Otherwise the model uses <b>[T]</b>.</p></div></div>
+          <h3>Manual efficiency</h3><p>If OEE is not entered, usable efficiency equals 100% minus Holiday/Vacation, Planned Downtime, Unplanned Downtime, and Training. Rework increases required hours; it does not reduce available hours.</p>
+          <table class="guide-table"><thead><tr><th>RAG</th><th>Utilization</th><th>Interpretation</th></tr></thead><tbody><tr><td><span class="tag tag-g">Green</span></td><td>&lt;85%</td><td>Operating margin remains, subject to input completeness.</td></tr><tr><td><span class="tag tag-y">Yellow</span></td><td>85–100%</td><td>At risk; normal variability may consume the remaining margin.</td></tr><tr><td><span class="tag tag-r">Red</span></td><td>&gt;100%</td><td>Modeled demand exceeds usable capacity.</td></tr></tbody></table>
+          <div class="guide-callout danger"><b>Do not trust a green cell by itself.</b> Zero demand, missing standard hours, or missing capacity can also produce an apparently harmless result. Confirm the source badges and completeness first.</div>
+          <button class="guide-go" onclick="guideGo('p5','nav_p5')">Go to Utilization</button>
+        </div>
+      </section>
+
+      <section class="guide-section" id="guide_footprint" data-guide="footprint warehouse storage square feet cubic feet pallet positions dwell working days wip peak monthly">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Footprint, WIP &amp; Warehouse Storage</span><span class="guide-section-kicker">Monthly simultaneous product mix, dwell, space per unit, and dimensional separation</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <div class="guide-formula"><b>Average WIP</b> = Monthly Ship Demand × Dwell Working Days ÷ Working Days/Month<br><b>Peak WIP</b> = Average WIP × Monthly Peak Factor<br><b>Required Space</b> = Peak WIP × Space per Unit</div>
+          <ul><li>Production departments use square feet and Sq Ft/Unit.</li><li>Warehouse departments default to cubic feet and Cubic Ft/Unit; each warehouse can instead use pallet positions.</li><li>Square feet, cubic feet, and pallet positions are never added together.</li><li>The department peak is the highest simultaneous monthly product mix—not the sum of each product’s unrelated peak.</li><li>The combined production KPI uses the highest month across production departments—not the sum of independent departmental maxima.</li><li>Annual-only demand falls evenly across months and therefore reproduces the original annual-average estimate.</li></ul>
+          <div class="guide-callout warn"><b>Required inputs:</b> every product with demand needs Dwell Days and Space/Unit for each applicable production or warehouse department. Available space is also required to calculate the gap.</div>
+          <button class="guide-go" onclick="guideGo('p8','nav_p8')">Go to Footprint</button>
+        </div>
+      </section>
+
+      <section class="guide-section" id="guide_people_recovery" data-guide="headcount fte target utilization hire lead scenario recovery milestone gap action">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Headcount, Scenarios &amp; Recovery</span><span class="guide-section-kicker">Convert load into staffing needs and create a dated plan to close capacity gaps</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <div class="guide-formula"><b>Required Headcount</b> = Ceiling(Period Load Hours ÷ (Period Hours/FTE × Target Utilization))<br><b>Headcount Gap</b> = Required Headcount − Current FTE</div>
+          <ul><li>Use realistic productive hours/FTE/year; do not substitute paid hours without accounting for losses.</li><li>Target utilization creates operating margin. Lower targets increase the modeled staffing requirement.</li><li>Hire By subtracts the hiring lead time from the first period with a positive headcount gap.</li><li>LT Adjust may move the staffing need earlier because personnel must be present when the department work begins.</li></ul>
+          <h3>Recovery planning</h3><p>Select a capacity scenario, add the trigger date, owner, investment, and dated milestones. Milestone FTE or capacity adders build a recovery curve. The Action Log should capture specific decisions, owners, due dates, priorities, and closure status.</p>
+          <div class="guide-callout"><b>Good recovery plan:</b> identifies the constraint, quantifies the gap, states the countermeasure, includes lead time and investment, assigns one owner, and shows when recovered capacity becomes usable.</div>
+          <button class="guide-go" onclick="guideGo('p7','nav_p7')">Go to Scenarios &amp; Recovery</button>
+        </div>
+      </section>
+
+      <section class="guide-section" id="guide_fields" data-guide="field dictionary definitions mli risk fte hours constraint copy factor dwell peak factor source">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Field Dictionary</span><span class="guide-section-kicker">Plain-language definitions for the inputs that most often cause interpretation errors</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <table class="guide-table"><thead><tr><th>Field</th><th>Meaning</th><th>Common mistake</th></tr></thead><tbody>
+            <tr><td>MLI / Product Line</td><td>The product, model family, or demand stream being planned.</td><td>Combining products that have materially different routings or space requirements.</td></tr>
+            <tr><td>Department Type</td><td>Production, Office, or Warehouse; controls which calculations and units apply.</td><td>Using Production for a warehouse and then interpreting square feet as storage volume.</td></tr>
+            <tr><td>Standard Hours/Unit</td><td>Labor or machine hours consumed by one unit in that department.</td><td>Entering cycle time without multiplying by labor content, cavities, yield, or routing frequency.</td></tr>
+            <tr><td>Copy Factor</td><td>Percent of product demand that creates an Office-department transaction.</td><td>Using 50 when 50× was intended; the field is a percentage and is capped at 100%.</td></tr>
+            <tr><td>Base Hours</td><td>Theoretical annual hours before efficiency losses.</td><td>Entering already-netted hours and then reducing them again through efficiency.</td></tr>
+            <tr><td>Demonstrated Hours</td><td>Evidence-based usable annual capacity that overrides theoretical capacity.</td><td>Using a one-time record without confirming it is sustainable.</td></tr>
+            <tr><td>Rework%</td><td>Additional required processing hours caused by rework.</td><td>Subtracting it from efficiency and also adding it to load, which double-counts the loss.</td></tr>
+            <tr><td>Start / End Week</td><td>Weeks before delivery where the department phase begins and ends.</td><td>Entering elapsed duration instead of weeks-before-delivery positions.</td></tr>
+            <tr><td>Dwell Days</td><td>Working days an average unit occupies the department or storage area.</td><td>Mixing calendar days with the model’s working-day denominator.</td></tr>
+            <tr><td>Monthly Peak Factor</td><td>Multiplier applied to average monthly WIP to cover within-month variation.</td><td>Using it to compensate for a missing seasonal monthly forecast.</td></tr>
+            <tr><td>Available Space</td><td>Usable capacity in the department’s selected basis: sq ft, cu ft, or pallet positions.</td><td>Entering total building area without subtracting aisles, access, utilities, and reserved zones.</td></tr>
+            <tr><td>Target Utilization</td><td>Planned productive loading level used for headcount sizing.</td><td>Setting 100%, which leaves no normal operating margin.</td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <section class="guide-section safe" id="guide_readiness" data-guide="model readiness validate complete checklist audit trust quality missing inputs">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Model Readiness Checklist</span><span class="guide-section-kicker">Minimum checks before presenting the workbook as decision-grade</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <div class="guide-checklist"><div class="guide-check">Product lines and departments match the real routing.</div><div class="guide-check">Forecast totals reconcile to the source forecast.</div><div class="guide-check">Monthly shape reflects launches, seasonality, and shutdowns.</div><div class="guide-check">Every demanded product has standard hours in each applicable department.</div><div class="guide-check">Capacity source is identified as theoretical [T] or demonstrated [D].</div><div class="guide-check">Efficiency losses or OEE have an evidence-based source.</div><div class="guide-check">Rework is not double-counted in both load and efficiency.</div><div class="guide-check">Every department/product combination has a valid LT phase.</div><div class="guide-check">Forecast-boundary clipped hours are zero or explicitly accepted.</div><div class="guide-check">Dwell and Space/Unit are complete for every demanded product.</div><div class="guide-check">Warehouse basis is correct: cubic feet or pallet positions.</div><div class="guide-check">Yellow and red periods have an owner and countermeasure.</div><div class="guide-check">Headcount assumptions reflect productive—not paid—hours.</div><div class="guide-check">Recovery milestones include dates, owners, and usable capacity.</div><div class="guide-check">Readiness checklist owners and evidence are current.</div><div class="guide-check">A JSON backup was exported before the review.</div></div>
+          <div class="guide-callout good"><b>Decision-grade means traceable, not merely complete.</b> A reviewer should be able to trace forecast → routing → required hours → capacity source → gap → countermeasure without guessing.</div>
+        </div>
+      </section>
+
+      <section class="guide-section warn" id="guide_data" data-guide="save autosave export import json regenerate clear browser storage backup destructive">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Saving, Importing &amp; Regenerating</span><span class="guide-section-kicker">What is stored, what is portable, and which actions replace data</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <table class="guide-table"><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td>Autosave</td><td>Saves the generated workbook to this browser after edits. It is not a shared cloud database.</td></tr><tr><td>Export</td><td>Downloads a portable JSON backup containing workbook data and settings.</td></tr><tr><td>Import</td><td>Validates a JSON file and, after confirmation, replaces the current workbook.</td></tr><tr><td>Generate Workbook</td><td>Builds a fresh workbook from Setup and intentionally clears downstream entries.</td></tr><tr><td>Clear Saved Data</td><td>Removes the autosaved workbook and Executive Summary commentary from this browser.</td></tr></tbody></table>
+          <div class="guide-callout danger"><b>Before regenerating or importing:</b> export the current workbook. Regeneration is appropriate when the product/department structure changes, but it is destructive to downstream entries.</div>
+          <ul><li>Use a filename or review note that identifies supplier, program, date, and workbook version.</li><li>Only import files from a trusted source.</li><li>If autosave reports a storage failure, export immediately.</li><li>Existing v6.76 warehouse rows default to cubic feet in v6.77; change the selector if pallet positions are required.</li></ul>
+        </div>
+      </section>
+
+      <section class="guide-section warn" id="guide_troubleshooting" data-guide="troubleshooting zero missing low wrong old page cache spread months clipped no capacity autosave">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Troubleshooting</span><span class="guide-section-kicker">Symptoms, likely causes, and the first corrective check</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <table class="guide-table"><thead><tr><th>Symptom</th><th>Likely cause / first check</th></tr></thead><tbody>
+            <tr><td>Monthly demand is unexpectedly zero</td><td>A monthly schedule exists for that product/year; blank months are intentionally zero. Review all 12 entries.</td></tr>
+            <tr><td>Product disappears in a period view</td><td>Confirm annual demand exists or enter a quarterly/monthly schedule. Refresh if the page is older than v6.77.</td></tr>
+            <tr><td>Load moved into an earlier month/year</td><td>LT Adjust is ON. Check the department’s assigned phase and Start Week.</td></tr>
+            <tr><td>A four-week phase touches two months</td><td>Normal calendar overlap. Verify total spread hours reconcile to the unspread load.</td></tr>
+            <tr><td>Utilization shows “No Cap”</td><td>Required hours exist but usable capacity is zero. Enter base/demonstrated capacity and efficiency.</td></tr>
+            <tr><td>Green result looks suspicious</td><td>Check for missing demand, standard hours, capacity, or copy factor before interpreting RAG.</td></tr>
+            <tr><td>Hours clipped before the forecast</td><td>The LT shift starts before the first displayed month. Add an earlier buffer year.</td></tr>
+            <tr><td>Footprint is incomplete</td><td>Enter Dwell Days, Space/Unit, and Available Space for each demanded product and applicable department.</td></tr>
+            <tr><td>Warehouse result has the wrong unit</td><td>Choose Cubic Feet or Pallet Positions in Footprint and confirm the Space/Unit values use the same basis.</td></tr>
+            <tr><td>Summary and detail disagree</td><td>Confirm the same resolution, LT, and Spread state; then refresh the current v6.77 page.</td></tr>
+            <tr><td>Autosave failed</td><td>Browser storage may be full. Export a JSON backup immediately.</td></tr>
+            <tr><td>GitHub Pages shows an old version</td><td>Reload the page or add a new query string after deployment cache propagation completes.</td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <section class="guide-section" id="guide_glossary" data-guide="glossary definitions rag mli oee wip lt cf fte demonstrated theoretical version history">
+        <button class="guide-section-head" onclick="guideToggleSection(this)" aria-expanded="false"><span><span class="guide-section-title">Glossary &amp; Version Notes</span><span class="guide-section-kicker">Abbreviations used throughout the workbook and the recent calculation changes</span></span><span class="guide-chevron">⌄</span></button>
+        <div class="guide-section-body">
+          <p><span class="guide-chip">MLI — Product/model line</span><span class="guide-chip">LT — Lead time</span><span class="guide-chip">OEE — Overall Equipment Effectiveness</span><span class="guide-chip">WIP — Work in process</span><span class="guide-chip">FTE — Full-time equivalent</span><span class="guide-chip">CF — Office Copy Factor</span><span class="guide-chip">RAG — Red/Amber/Green</span><span class="guide-chip">[T] — Theoretical</span><span class="guide-chip">[D] — Demonstrated</span><span class="guide-chip">PLF — Peak Load Factor</span></p>
+          <h3>Recent versions</h3><table class="guide-table"><thead><tr><th>Version</th><th>Change</th></tr></thead><tbody><tr><td>v6.77</td><td>Expanded searchable operating guide, workflow, worked example, field dictionary, readiness checklist, and troubleshooting reference.</td></tr><tr><td>v6.76</td><td>Monthly footprint peaks; warehouse cubic feet/pallet-position basis; dimensional separation; footprint completeness warnings.</td></tr><tr><td>v6.75</td><td>LT/Spread reconciliation, monthly timing model, import and rendering hardening, forecast-boundary warnings, and active-tab performance.</td></tr></tbody></table>
+        </div>
+      </section>
+    </div>
+    <div class="guide-version">Capacity &amp; Engineering Workbook v6.77 · Embedded guide · No external dependencies</div>
   </div>
 </div>
 
@@ -405,7 +562,7 @@ input[type=number].ni{text-align:right;}
 <div id="p1" class="pg"><div id="p1_content"><div class="not-generated"><div class="icon">⚙</div><b>Complete Setup and generate the workbook first</b></div></div></div>
 <div id="pLT" class="pg">
   <div class="card lt-card">
-    <h2>⏳ Lead Times — Phase Configuration <span style="font-size:10px;font-weight:400;color:#718096;margin-left:8px">v6.76</span></h2>
+    <h2>⏳ Lead Times — Phase Configuration <span style="font-size:10px;font-weight:400;color:#718096;margin-left:8px">v6.77</span></h2>
     <div class="sub">Define independent lead time phases per MLI. Assign each department to exactly one phase per MLI. The model places full demand at Delivery Date − Phase Start Week for that department's capacity calculation.</div>
   </div>
   <div id="pLT_not_generated" class="infobox ib-y" style="display:block">Complete Setup and generate the workbook first.</div>
@@ -579,6 +736,42 @@ function gv(id){var e=document.getElementById(id);if(!e)return 0;return clampNum
 function sv(id){var e=document.getElementById(id);return e?e.value||'':'';}
 function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
 function setHTML(id,v){var e=document.getElementById(id);if(e)e.innerHTML=v;}
+function guideToggleSection(btn){
+  var sec=btn&&btn.closest?btn.closest('.guide-section'):null;if(!sec)return;
+  var isOpen=sec.classList.toggle('open');btn.setAttribute('aria-expanded',isOpen?'true':'false');
+}
+function guideOpenSection(id){
+  var sec=document.getElementById(id);if(!sec)return;
+  sec.style.display='';sec.classList.add('open');
+  var btn=sec.querySelector('.guide-section-head');if(btn)btn.setAttribute('aria-expanded','true');
+  if(typeof sec.scrollIntoView==='function')sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function guideExpandAll(open){
+  document.querySelectorAll('#guide_sections .guide-section').forEach(function(sec){
+    if(sec.style.display==='none')return;
+    sec.classList.toggle('open',!!open);
+    var btn=sec.querySelector('.guide-section-head');if(btn)btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+}
+function guideSearch(value){
+  var q=String(value||'').trim().toLowerCase(),count=0;
+  var sections=document.querySelectorAll('#guide_sections .guide-section');
+  sections.forEach(function(sec){
+    var match=!q||sec.textContent.toLowerCase().indexOf(q)>=0;
+    sec.style.display=match?'':'none';
+    if(match){count++;if(q){sec.classList.add('open');var btn=sec.querySelector('.guide-section-head');if(btn)btn.setAttribute('aria-expanded','true');}}
+  });
+  setText('guide_search_count',count+' section'+(count===1?'':'s'));
+  var none=document.getElementById('guide_no_results');if(none)none.style.display=count?'none':'block';
+}
+function guideResetSearch(){
+  var input=document.getElementById('guide_search');if(input)input.value='';
+  guideSearch('');if(input&&typeof input.focus==='function')input.focus();
+}
+function guideGo(pageId,navId){
+  tab(pageId,document.getElementById(navId));
+  if(typeof window.scrollTo==='function')try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}
+}
 function fmt(n,d){if(n===null||n===undefined||isNaN(n))return'--';return n.toLocaleString('en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
 function fmtP(n){if(!isFinite(n)||isNaN(n))return'--';return Math.round(n)+'%';}
 function yoy(a,b){if(!a||a===0)return b>0?'New':'--';return Math.round((b-a)/a*100)+'%';}
@@ -1774,7 +1967,7 @@ function updateRecoveryPlanSummary(){
 // ─────────────────────────────────────────────────────────────────────────────
 function updateHeader(){
   var sup=sv('cfg_supplier');
-  setText('hdr_title',(sup?sup+' \u2014 ':'')+'Capacity & Engineering Workbook v6.76');
+  setText('hdr_title',(sup?sup+' \u2014 ':'')+'Capacity & Engineering Workbook v6.77');
   setText('hdr_sub','Capacity Planning'+(sv('cfg_program')?' | '+sv('cfg_program'):''));
   setText('hdr_date',sv('cfg_date'));setText('hdr_auditor',sv('cfg_auditor')?'Auditor: '+sv('cfg_auditor'):'');
 }
@@ -2633,7 +2826,7 @@ function doSave(){
 }
 function collectAllData(){
   var data={
-    version:'6.76',ts:Date.now(),resolution:RESOLUTION,wfView:wfView,gcMode:gcMode,sfVisible:sfVisible,dwVisible:dwVisible,
+    version:'6.77',ts:Date.now(),resolution:RESOLUTION,wfView:wfView,gcMode:gcMode,sfVisible:sfVisible,dwVisible:dwVisible,
     leadTimeAdjust:leadTimeAdjust,ltSpreadMode:ltSpreadMode,rampMetric:rampMetric,
     ltConfig:{phases:{},deptMap:{}},
     state:{supplier:STATE.supplier,program:STATE.program,date:STATE.date,auditor:STATE.auditor,startYr:STATE.startYr,numYrs:STATE.numYrs,mlis:STATE.mlis,depts:STATE.depts,clItems:STATE.clItems,years:STATE.years},
@@ -2801,7 +2994,7 @@ function exportData(){
   var safeSupplier=STATE.supplier.replace(/[^a-zA-Z0-9_\-]/g,'_');
   var json=JSON.stringify(collectAllData(),null,2),blob=new Blob([json],{type:'application/json'});
   var url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='Capacity_Workbook_v676_'+safeSupplier+'_'+new Date().toISOString().slice(0,10)+'.json';
+  a.href=url;a.download='Capacity_Workbook_v677_'+safeSupplier+'_'+new Date().toISOString().slice(0,10)+'.json';
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 function importData(event){
