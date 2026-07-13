@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A self-contained capacity and engineering planning workbook.">
-<title>Capacity &amp; Engineering Workbook v6.75</title>
+<title>Capacity &amp; Engineering Workbook v6.76</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-size:13px;}
@@ -305,7 +305,7 @@ input[type=number].ni{text-align:right;}
 <body>
 <div class="hdr">
   <div class="hdr-left">
-    <h1 id="hdr_title">Capacity &amp; Engineering Workbook v6.75</h1>
+    <h1 id="hdr_title">Capacity &amp; Engineering Workbook v6.76</h1>
     <div class="sub" id="hdr_sub">Capacity Planning</div>
     <div class="hdr-save-meta" id="hdr_save_ts"></div>
   </div>
@@ -387,7 +387,7 @@ input[type=number].ni{text-align:right;}
 </div>
 
 <div id="pGuide" class="pg">
-  <div class="infobox ib-b" style="margin-bottom:16px"><b>📘 User Guide — Capacity &amp; Engineering Workbook v6.75</b><br>This workbook runs entirely in one browser page. Your working data stays in this browser unless you export and share a JSON backup.</div>
+  <div class="infobox ib-b" style="margin-bottom:16px"><b>📘 User Guide — Capacity &amp; Engineering Workbook v6.76</b><br>This workbook runs entirely in one browser page. Your working data stays in this browser unless you export and share a JSON backup.</div>
   <div class="guide-grid">
     <section class="guide-card safe"><h2>Quick Start</h2><ol class="guide-steps"><li>Enter organization details, product lines, departments, and checklist items on <b>Setup</b>.</li><li>Generate the workbook. Regenerating intentionally clears downstream entries.</li><li>Enter delivery quantities on <b>Demand</b> using annual, quarterly, or monthly resolution.</li><li>Enter capacity, standard hours, efficiency, and optional demonstrated capacity.</li><li>Configure phases and department assignments on <b>Lead Times</b>.</li><li>Review Utilization, Gap Chart, Headcount, Recovery, and Executive Summary.</li><li>Use <b>Export</b> regularly to create a portable backup.</li></ol></section>
     <section class="guide-card"><h2>Demand Resolution</h2><table class="guide-table"><tr><th>Mode</th><th>Use</th></tr><tr><td>Annual</td><td>Long-range totals. If no sub-annual schedule exists, calculations distribute annual demand evenly for period views.</td></tr><tr><td>Quarterly</td><td>Seasonal planning by quarter. Each quarter is divided evenly when a monthly calculation is required.</td></tr><tr><td>Monthly</td><td>Most precise timing. Once a product/year has monthly entries, blank months mean zero.</td></tr></table><h3>Important</h3><p>Demand is always entered at the delivery or ship date. Lead-time settings move capacity work earlier without changing the original forecast.</p></section>
@@ -396,7 +396,8 @@ input[type=number].ni{text-align:right;}
     <section class="guide-card"><h2>How Capacity Is Calculated</h2><p><b>Required hours</b> = Demand × Standard Hours × (1 + Rework%) × Office Copy Factor.</p><p style="margin-top:6px"><b>Available hours</b> use demonstrated capacity when supplied; otherwise Base Hours × Efficiency or OEE.</p><table class="guide-table" style="margin-top:8px"><tr><th>RAG</th><th>Meaning</th></tr><tr><td>Green</td><td>Below 85% utilization</td></tr><tr><td>Yellow</td><td>85% through 100%</td></tr><tr><td>Red</td><td>Above 100%</td></tr></table></section>
     <section class="guide-card"><h2>Tabs at a Glance</h2><ul><li><b>Base Capacity:</b> theoretical or demonstrated available hours.</li><li><b>Std Hours &amp; Inputs:</b> routing hours, copy factors, floor space, and dwell.</li><li><b>Efficiency &amp; OEE:</b> availability losses, rework, and optional OEE.</li><li><b>Utilization:</b> period load, capacity, utilization, and gap.</li><li><b>Gap Chart:</b> demand versus capacity visualization.</li><li><b>Scenarios &amp; Recovery:</b> capacity scenarios and dated milestones.</li><li><b>Footprint / Headcount:</b> facility and staffing requirements.</li><li><b>Action Log / Exec Summary:</b> ownership and management output.</li></ul></section>
     <section class="guide-card safe"><h2>Saving and Sharing</h2><ul><li>Autosave uses browser storage after the workbook is generated.</li><li><b>Export</b> downloads a JSON backup containing workbook data.</li><li><b>Import</b> replaces the current workbook after validation and confirmation.</li><li>Only import files from people you trust.</li><li>Clearing saved data removes both workbook data and saved commentary from this browser.</li></ul><p style="margin-top:8px"><b>Recommended:</b> export after major planning sessions and before regenerating the workbook.</p></section>
-    <section class="guide-card warn"><h2>Troubleshooting</h2><ul><li><b>Monthly totals look low:</b> confirm whether blank months are intentionally zero.</li><li><b>Load moved earlier:</b> check the department’s phase assignment and Start Week.</li><li><b>Summary and detail differ:</b> refresh the page and confirm you are on v6.75 or later.</li><li><b>Hours clipped:</b> extend the forecast start earlier.</li><li><b>Autosave failed:</b> export immediately; browser storage may be full.</li><li><b>Old page after deployment:</b> reload or open the page with a fresh query string.</li></ul></section>
+    <section class="guide-card"><h2>Footprint &amp; Warehouse</h2><ul><li>Production space is measured in <b>square feet</b>.</li><li>Warehouse capacity defaults to <b>cubic feet</b> and may be changed to pallet positions by warehouse department.</li><li>Monthly demand drives WIP and inventory peaks; annual-only demand is evenly distributed across months.</li><li>Dwell Days are working days. Space requirements use the simultaneous product mix in each month.</li><li>Production and warehouse units are never added together.</li></ul></section>
+    <section class="guide-card warn"><h2>Troubleshooting</h2><ul><li><b>Monthly totals look low:</b> confirm whether blank months are intentionally zero.</li><li><b>Load moved earlier:</b> check the department’s phase assignment and Start Week.</li><li><b>Summary and detail differ:</b> refresh the page and confirm you are on v6.76 or later.</li><li><b>Footprint incomplete:</b> enter both Dwell Days and Space/Unit for every product with demand.</li><li><b>Hours clipped:</b> extend the forecast start earlier.</li><li><b>Autosave failed:</b> export immediately; browser storage may be full.</li><li><b>Old page after deployment:</b> reload or open the page with a fresh query string.</li></ul></section>
   </div>
 </div>
 
@@ -404,7 +405,7 @@ input[type=number].ni{text-align:right;}
 <div id="p1" class="pg"><div id="p1_content"><div class="not-generated"><div class="icon">⚙</div><b>Complete Setup and generate the workbook first</b></div></div></div>
 <div id="pLT" class="pg">
   <div class="card lt-card">
-    <h2>⏳ Lead Times — Phase Configuration <span style="font-size:10px;font-weight:400;color:#718096;margin-left:8px">v6.75</span></h2>
+    <h2>⏳ Lead Times — Phase Configuration <span style="font-size:10px;font-weight:400;color:#718096;margin-left:8px">v6.76</span></h2>
     <div class="sub">Define independent lead time phases per MLI. Assign each department to exactly one phase per MLI. The model places full demand at Delivery Date − Phase Start Week for that department's capacity calculation.</div>
   </div>
   <div id="pLT_not_generated" class="infobox ib-y" style="display:block">Complete Setup and generate the workbook first.</div>
@@ -517,7 +518,7 @@ input[type=number].ni{text-align:right;}
       <div class="card red" style="margin-bottom:0"><h2>⚠ Top Risks</h2><div class="sub">Auto-identified.</div><div id="ex_risk_panel"></div></div>
     </div>
     <div class="card tel"><h2>📅 Year-by-Year Utilisation</h2><div id="ex_lt_note" style="margin-bottom:8px"></div><div class="tbl-wrap"><table><thead id="ex_util_thead"></thead><tbody id="ex_util_tbody"></tbody></table></div></div>
-    <div class="card pnk"><h2>📐 Footprint Snapshot</h2><div class="tbl-wrap"><table><thead><tr><th>Department</th><th>Type</th><th class="r">Available Sq Ft</th><th class="r">Peak Required</th><th class="r">Gap</th><th>Status</th></tr></thead><tbody id="ex_fp_tbody"></tbody></table></div></div>
+    <div class="card pnk"><h2>📐 Footprint &amp; Storage Snapshot</h2><div class="tbl-wrap"><table><thead><tr><th>Department</th><th>Basis</th><th class="r">Available Space</th><th class="r">Peak Required</th><th>Peak Month</th><th class="r">Gap</th><th>Status</th></tr></thead><tbody id="ex_fp_tbody"></tbody></table></div></div>
     <div class="card grn"><h2>👥 Headcount Gap</h2><div class="tbl-wrap"><table><thead><tr><th>Department</th><th class="r">Current FTE</th><th class="r">Peak Req FTE</th><th class="r">Gap</th><th>Peak Year</th><th>Status</th></tr></thead><tbody id="ex_hc_tbody"></tbody></table></div></div>
     <div class="card org"><h2>📈 Recovery Plan Actions Summary</h2><div id="ex_ramp_summary"></div></div>
     <div class="g2" style="margin-bottom:16px">
@@ -990,6 +991,20 @@ function getSF(mi,di){return gv('sf_m'+mi+'_d'+di);}
 function getDW(mi,di){return gv('dw_m'+mi+'_d'+di);}
 function getWorkDays(){return clampNum(sv('fp_wdays'),200,365,250);}
 function getPLF(){return clampNum(sv('fp_plf'),1,3,1.2);}
+function getFpBasis(di){
+  if(!STATE.depts[di]||STATE.depts[di].type!=='wh')return'sqft';
+  var v=sv('wh_basis_d'+di);return v==='pallet'?'pallet':'cuft';
+}
+function getFpUnit(di){var b=getFpBasis(di);return b==='cuft'?'cu ft':b==='pallet'?'pallet pos':'sq ft';}
+function getFpPerUnitLabel(di){var b=getFpBasis(di);return b==='cuft'?'Cubic Ft/Unit':b==='pallet'?'Pallet Positions/Unit':'Sq Ft/Unit';}
+function getFpAvailableLabel(di){var b=getFpBasis(di);return b==='cuft'?'Available Cubic Ft':b==='pallet'?'Available Pallet Positions':'Available Sq Ft';}
+function getFpBasisLabel(di){var b=getFpBasis(di);return b==='cuft'?'Cubic Feet':b==='pallet'?'Pallet Positions':'Square Feet';}
+function updateWarehouseBasisUI(di){
+  var label=document.getElementById('space_basis_label_d'+di);if(label)label.textContent=getFpPerUnitLabel(di);
+  var avLabel=document.getElementById('avail_label_d'+di);if(avLabel)avLabel.textContent=getFpAvailableLabel(di);
+  var unit=document.getElementById('avail_unit_d'+di);if(unit)unit.textContent=getFpUnit(di);
+}
+function onWarehouseBasisChange(di){updateWarehouseBasisUI(di);renderFpSummaryBars();renderWIPTable();renderExecSummary();autoSave();}
 function getCF(mi,di){if(STATE.depts[di]&&STATE.depts[di].type!=='off')return 1;var raw=sv('cf_m'+mi+'_d'+di);if(raw==='')return 1;return clampNum(raw,1,100,100)/100;}
 
 function redistributeAllAnnual(){
@@ -1095,16 +1110,48 @@ function getDeptLoadAnnual(di,yi){
   for(var j=0;j<STATE.mlis.length;j++)tot+=getDemAnnualAdjustedForDept(j,di,yi)*getSH(j,di)*rwk*(isOff?getCF(j,di):1);
   return tot;
 }
-function calcFpAreaAnnual(di,yi){
-  var wd=getWorkDays(),plf=getPLF(),total=0,mliD={};
+function calcFpAreaMonthly(di,yi,mo){
+  var workDaysPerMonth=getWorkDays()/12,plf=getPLF(),total=0,totalAvg=0,totalPeak=0,mliD={};
   for(var j=0;j<STATE.mlis.length;j++){
-    var dem=getDemAnnual(j,yi),dw=getDW(j,di),sf=getSF(j,di);
-    var avg=(wd>0&&dw>0&&dem>0)?dem*dw/wd:0,peak=avg*plf,req=sf>0?peak*sf:0;
-    total+=req;mliD[j]={dem:dem,dw:dw,sf:sf,avg:avg,peak:peak,req:req};
+    var dem=getDemMonthly(j,yi,mo),dw=getDW(j,di),space=getSF(j,di);
+    var avg=(workDaysPerMonth>0&&dw>0&&dem>0)?dem*dw/workDaysPerMonth:0,peak=avg*plf,req=space>0?peak*space:0;
+    totalAvg+=avg;totalPeak+=peak;total+=req;mliD[j]={dem:dem,dw:dw,space:space,avg:avg,peak:peak,req:req};
   }
-  return{total:total,mli:mliD};
+  return{total:total,totalAvg:totalAvg,totalPeak:totalPeak,mli:mliD,yi:yi,mo:mo};
 }
-function calcPeakFpArea(di){var maxReq=0;for(var yi=0;yi<STATE.years.length;yi++){var fp=calcFpAreaAnnual(di,yi);if(fp.total>maxReq)maxReq=fp.total;}return maxReq;}
+function calcFpAreaAnnual(di,yi){
+  var best=null;
+  for(var mo=0;mo<12;mo++){var fp=calcFpAreaMonthly(di,yi,mo);if(!best||fp.total>best.total)best=fp;}
+  return best||{total:0,totalAvg:0,totalPeak:0,mli:{},yi:yi,mo:0};
+}
+function getFpPeak(di){
+  var best=null;
+  for(var yi=0;yi<STATE.years.length;yi++)for(var mo=0;mo<12;mo++){var fp=calcFpAreaMonthly(di,yi,mo);if(!best||fp.total>best.total)best=fp;}
+  return best||{total:0,totalAvg:0,totalPeak:0,mli:{},yi:0,mo:0};
+}
+function calcPeakFpArea(di){return getFpPeak(di).total;}
+function getFootprintGroupPeak(type){
+  var best={total:0,yi:0,mo:0};
+  for(var yi=0;yi<STATE.years.length;yi++)for(var mo=0;mo<12;mo++){
+    var total=0;for(var di=0;di<STATE.depts.length;di++)if(STATE.depts[di].type===type)total+=calcFpAreaMonthly(di,yi,mo).total;
+    if(total>best.total)best={total:total,yi:yi,mo:mo};
+  }
+  return best;
+}
+function getFpMissingInputs(){
+  var missing=[];
+  for(var di=0;di<STATE.depts.length;di++){
+    if(STATE.depts[di].type==='off')continue;
+    for(var mi=0;mi<STATE.mlis.length;mi++){
+      var hasDemand=false;for(var yi=0;yi<STATE.years.length&&!hasDemand;yi++)if(getDemAnnual(mi,yi)>0)hasDemand=true;
+      if(!hasDemand)continue;
+      if(getDW(mi,di)<=0)missing.push({di:di,mi:mi,field:'Dwell Days'});
+      if(getSF(mi,di)<=0)missing.push({di:di,mi:mi,field:getFpPerUnitLabel(di)});
+    }
+  }
+  return missing;
+}
+function getFpDeptMissingCount(di,list){return(list||getFpMissingInputs()).filter(function(x){return x.di===di;}).length;}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RESOLUTION BAR
@@ -1727,7 +1774,7 @@ function updateRecoveryPlanSummary(){
 // ─────────────────────────────────────────────────────────────────────────────
 function updateHeader(){
   var sup=sv('cfg_supplier');
-  setText('hdr_title',(sup?sup+' \u2014 ':'')+'Capacity & Engineering Workbook v6.75');
+  setText('hdr_title',(sup?sup+' \u2014 ':'')+'Capacity & Engineering Workbook v6.76');
   setText('hdr_sub','Capacity Planning'+(sv('cfg_program')?' | '+sv('cfg_program'):''));
   setText('hdr_date',sv('cfg_date'));setText('hdr_auditor',sv('cfg_auditor')?'Auditor: '+sv('cfg_auditor'):'');
 }
@@ -1873,11 +1920,11 @@ function buildP3(){
     html+='<td><select class="ni" id="sh_src_d'+i+'" onchange="autoSave()"><option>ERP Routing</option><option>Estimate</option><option>Actual Avg</option><option>Benchmark</option></select></td></tr>';
   }
   html+='</tbody></table></div></div>';
-  html+='<button class="sec-btn btn-pk" id="sfbtn" onclick="toggleSec(\'sfsec\',\'sfbtn\',\'Sq Ft Per Unit\',\'sfVisible\')">Show Sq Ft Per Unit</button>';
-  html+='<div id="sfsec"'+(sfVisible?'':' class="hidden"')+'><div class="card pnk"><h2>Sq Ft Per Unit</h2><div class="tbl-wrap"><table><thead><tr><th>Department</th>';
+  html+='<button class="sec-btn btn-pk" id="sfbtn" onclick="toggleSec(\'sfsec\',\'sfbtn\',\'Space Per Unit\',\'sfVisible\')">Show Space Per Unit</button>';
+  html+='<div id="sfsec"'+(sfVisible?'':' class="hidden"')+'><div class="card pnk"><h2>Space Per Unit</h2><div class="sub">Production uses square feet. Warehouse units are selected on the Footprint tab.</div><div class="tbl-wrap"><table><thead><tr><th>Department / Basis</th>';
   for(var j=0;j<M.length;j++)html+='<th class="r">'+escH(M[j].code)+'</th>';
   html+='</tr></thead><tbody>';
-  for(var i=0;i<D.length;i++){if(D[i].type==='off')continue;html+='<tr'+deptRowClass(D[i].type)+'><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td>';for(var j=0;j<M.length;j++)html+='<td><input class="ni" type="number" id="sf_m'+j+'_d'+i+'" value="" min="0" oninput="scheduleRecalc();autoSave()" style="text-align:right"></td>';html+='</tr>';}
+  for(var i=0;i<D.length;i++){if(D[i].type==='off')continue;html+='<tr'+deptRowClass(D[i].type)+'><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong><div id="space_basis_label_d'+i+'" style="font-size:10px;color:#718096;margin-top:2px">'+getFpPerUnitLabel(i)+'</div></td>';for(var j=0;j<M.length;j++)html+='<td><input class="ni" type="number" id="sf_m'+j+'_d'+i+'" value="" min="0" oninput="scheduleRecalc();autoSave()" style="text-align:right"></td>';html+='</tr>';}
   html+='</tbody></table></div></div></div>';
   html+='<button class="sec-btn btn-te" id="dwbtn" onclick="toggleSec(\'dwsec\',\'dwbtn\',\'Dwell Days Per Unit\',\'dwVisible\')">Show Dwell Days Per Unit</button>';
   html+='<div id="dwsec"'+(dwVisible?'':' class="hidden"')+'><div class="card tel"><h2>Dwell Days Per Unit</h2><div class="tbl-wrap"><table><thead><tr><th>Department</th>';
@@ -1886,7 +1933,7 @@ function buildP3(){
   for(var i=0;i<D.length;i++){if(D[i].type==='off')continue;html+='<tr'+deptRowClass(D[i].type)+'><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td>';for(var j=0;j<M.length;j++)html+='<td><input class="ni" type="number" id="dw_m'+j+'_d'+i+'" value="" min="0" step="0.5" oninput="scheduleRecalc();autoSave()" style="text-align:right"></td>';html+='</tr>';}
   html+='</tbody></table></div></div></div>';
   setHTML('p3_content',html);
-  var sfb=document.getElementById('sfbtn');if(sfb)sfb.textContent=(sfVisible?'Hide':'Show')+' Sq Ft Per Unit';
+  var sfb=document.getElementById('sfbtn');if(sfb)sfb.textContent=(sfVisible?'Hide':'Show')+' Space Per Unit';
   var dwb=document.getElementById('dwbtn');if(dwb)dwb.textContent=(dwVisible?'Hide':'Show')+' Dwell Days Per Unit';
 }
 function buildP4(){
@@ -2214,61 +2261,82 @@ function renderWaterfall(){
 function buildP8(){
   var D=STATE.depts,areaOpts='';for(var i=0;i<D.length;i++){if(D[i].type!=='off')areaOpts+='<option value="'+i+'">'+deptIcon(D[i].type)+escH(D[i].name)+'</option>';}
   var html='<div id="res_output_p8"></div>';
-  html+='<div class="g4"><div class="kpi"><div class="v" id="fp_prod_avail">--</div><div class="l">Production Sq Ft</div></div><div class="kpi"><div class="v" id="fp_wh_avail">--</div><div class="l">Warehouse Sq Ft</div></div><div class="kpi" style="border-left:4px solid #d69e2e"><div class="v" id="fp_req_y1">--</div><div class="l">Peak Year Required</div></div><div class="kpi"><div class="v" id="fp_gap_y1">--</div><div class="l">Peak Year Gap</div></div></div>';
-  html+='<div class="card"><h2>Footprint Assumptions</h2><div class="row-params"><div><label>Working Days/Year:</label><input class="ni" type="number" id="fp_wdays" value="250" min="200" max="365" oninput="scheduleRecalc();autoSave()" style="width:65px;display:inline-block;text-align:right"></div><div><label>Peak Load Factor:</label><input class="ni" type="number" id="fp_plf" value="1.2" min="1" max="3" step="0.05" oninput="scheduleRecalc();autoSave()" style="width:60px;display:inline-block;text-align:right"></div></div>';
-  html+='<div class="tbl-wrap"><table><thead><tr><th>Department</th><th>Type</th><th class="r">Available Sq Ft</th><th>Notes</th></tr></thead><tbody>';
-  for(var i=0;i<D.length;i++){if(D[i].type==='off')continue;html+='<tr'+deptRowClass(D[i].type)+'><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td><td>'+typeLabel(D[i].type)+'</td><td><input class="ni" type="number" id="avail_d'+i+'" value="" min="0" oninput="scheduleRecalc();autoSave()" style="text-align:right"></td><td><input class="ni" type="text" id="fp_note_d'+i+'" placeholder="Notes..." oninput="autoSave()"></td></tr>';}
+  html+='<div class="g4"><div class="kpi"><div class="v" id="fp_prod_avail">--</div><div class="l">Production Available</div></div><div class="kpi" style="border-left:4px solid #d69e2e"><div class="v" id="fp_prod_req">--</div><div class="l">Production Peak Required</div></div><div class="kpi"><div class="v" id="fp_prod_gap">--</div><div class="l">Production Gap at Peak</div></div><div class="kpi"><div class="v" id="fp_wh_risk">--</div><div class="l">Warehouse Areas at Risk</div></div></div>';
+  html+='<div id="fp_data_warning"></div>';
+  html+='<div class="card"><h2>Footprint Assumptions</h2><div class="sub">Dwell is measured in working days. Monthly demand determines simultaneous WIP/inventory peaks.</div><div class="row-params"><div><label>Working Days/Year:</label><input class="ni" type="number" id="fp_wdays" value="250" min="200" max="365" oninput="scheduleRecalc();autoSave()" style="width:65px;display:inline-block;text-align:right"></div><div><label>Monthly Peak Factor:</label><input class="ni" type="number" id="fp_plf" value="1.2" min="1" max="3" step="0.05" oninput="scheduleRecalc();autoSave()" style="width:60px;display:inline-block;text-align:right"></div></div>';
+  html+='<div class="tbl-wrap"><table><thead><tr><th>Department</th><th>Capacity Basis</th><th class="r">Available Space</th><th>Notes</th></tr></thead><tbody>';
+  for(var i=0;i<D.length;i++){
+    if(D[i].type==='off')continue;
+    var basis=D[i].type==='wh'?'<select class="ni" id="wh_basis_d'+i+'" onchange="onWarehouseBasisChange('+i+')"><option value="cuft">Cubic Feet</option><option value="pallet">Pallet Positions</option></select>':'<span class="tag tag-b">Square Feet</span>';
+    html+='<tr'+deptRowClass(D[i].type)+'><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td><td>'+basis+'</td><td><div style="display:flex;align-items:center;gap:5px"><input class="ni" type="number" id="avail_d'+i+'" value="" min="0" oninput="scheduleRecalc();autoSave()" style="text-align:right"><span id="avail_unit_d'+i+'" style="font-size:10px;color:#718096;white-space:nowrap">'+getFpUnit(i)+'</span></div><div id="avail_label_d'+i+'" style="font-size:9px;color:#a0aec0">'+getFpAvailableLabel(i)+'</div></td><td><input class="ni" type="text" id="fp_note_d'+i+'" placeholder="Notes..." oninput="autoSave()"></td></tr>';
+  }
   html+='</tbody></table></div></div>';
-  html+='<div class="card pnk"><h2>Footprint Summary</h2><div class="sub">Footprint uses ship-date demand (LT adjust does not affect floor space).</div><div id="fp_summary_bars"></div></div>';
-  html+='<div class="card tel"><h2>WIP / Inventory</h2><div class="fl-row"><label style="font-size:12px;font-weight:600">Area:</label><select class="ni" style="width:auto" id="wip_area" onchange="renderWIPTable();autoSave()">'+areaOpts+'</select></div><div id="wip_area_out"></div></div>';
+  html+='<div class="card pnk"><h2>Footprint Summary</h2><div class="sub">Peaks use ship-date monthly demand and the simultaneous product mix. LT Adjust does not change footprint timing.</div><div id="fp_summary_bars"></div></div>';
+  var yrOpts='';for(var y=0;y<STATE.years.length;y++)yrOpts+='<option value="'+y+'">'+STATE.years[y]+'</option>';
+  html+='<div class="card tel"><h2>Monthly WIP / Inventory</h2><div class="fl-row"><label style="font-size:12px;font-weight:600">Area:</label><select class="ni" style="width:auto" id="wip_area" onchange="renderWIPTable();autoSave()">'+areaOpts+'</select><label style="font-size:12px;font-weight:600;margin-left:8px">Year:</label><select class="ni" style="width:auto" id="wip_year" onchange="renderWIPTable();autoSave()">'+yrOpts+'</select></div><div id="wip_area_out"></div></div>';
   setHTML('p8_content',html);
 }
 function renderFpSummaryBars(){
   var el=document.getElementById('fp_summary_bars');if(!el)return;
-  var D=STATE.depts,Y=STATE.years,html='',maxReq=0,prodAvail=0,whAvail=0,totalPeakReq=0,totalAvail=0;
-  for(var i=0;i<D.length;i++){if(D[i].type==='off')continue;var pr=calcPeakFpArea(i);if(pr>maxReq)maxReq=pr;}
-  if(maxReq===0)maxReq=1;
+  var D=STATE.depts,Y=STATE.years,html='',prodAvail=0,prodAvailComplete=true,whRisk=0;
+  var missing=getFpMissingInputs(),capMissing=[];
   for(var i=0;i<D.length;i++){
     if(D[i].type==='off')continue;
-    var av=gv('avail_d'+i),peakReq=calcPeakFpArea(i);
-    if(D[i].type==='prod')prodAvail+=av;if(D[i].type==='wh')whAvail+=av;totalAvail+=av;totalPeakReq+=peakReq;
-    var pct=safeDiv(peakReq,maxReq)*100,avPct=maxReq>0&&av>0?safeDiv(av,maxReq)*100:0;
-    var fillCol=av>0&&peakReq>av?'#e53e3e':av>0&&peakReq>=av*0.85?'#d69e2e':'#48bb78';
-    var stsCls=av>0&&peakReq>av?'sts-er':av>0&&peakReq>=av*0.85?'sts-wn':av>0?'sts-ok':'sts-wn';
-    var stsTxt=av>0&&peakReq>av?'Exceeded':av>0&&peakReq>=av*0.85?'At Risk':av>0?'OK':'No Data';
-    html+='<div><div class="fp-dept-summary" onclick="toggleFpDetail('+i+')"><div class="fp-dept-name">'+deptIcon(D[i].type)+escH(D[i].name)+'</div><div class="fp-dept-track"><div class="fp-dept-fill" style="width:'+(isFinite(pct)?pct.toFixed(1):0)+'%;background:'+fillCol+'">'+(peakReq>0?fmt(Math.round(peakReq))+' sq ft':'')+'</div>';
-    if(av>0)html+='<div class="fp-dept-avail-line" style="left:'+(isFinite(avPct)?avPct.toFixed(1):0)+'%"></div>';
-    html+='</div><div class="fp-dept-val">'+(av>0?'Avail: '+fmt(Math.round(av))+' sq ft':'No data')+'</div><div class="fp-dept-status"><span class="sts '+stsCls+'">'+stsTxt+'</span></div><div class="fp-chevron" id="fp_chev_'+i+'">v</div></div>';
-    html+='<div class="fp-dept-detail" id="fp_dept_detail_'+i+'"><div class="tbl-wrap"><table><thead><tr><th>Year</th><th>MLI</th><th class="r">Avg WIP</th><th class="r">Peak WIP</th><th class="r">Sq Ft/Unit</th><th class="r">Required Sq Ft</th></tr></thead><tbody>';
-    for(var y=0;y<Y.length;y++){
-      var fp=calcFpAreaAnnual(i,y),first=true;
-      for(var j=0;j<STATE.mlis.length;j++){var md=fp.mli[j];if(!md||md.req===0)continue;html+='<tr><td>'+(first?'<strong>'+Y[y]+'</strong>':'')+'</td><td>'+escH(STATE.mlis[j].code)+'</td><td class="r">'+md.avg.toFixed(2)+'</td><td class="r">'+md.peak.toFixed(2)+'</td><td class="r">'+(md.sf>0?md.sf:'--')+'</td><td class="r"><strong>'+fmt(Math.round(md.req))+'</strong></td></tr>';first=false;}
-      var fpTot=fp.total,av2=gv('avail_d'+i),gap2=fpTot-av2;html+='<tr style="background:#f7fafc;font-weight:700"><td><strong>'+Y[y]+' Total</strong></td><td></td><td></td><td></td><td></td><td class="r '+(av2>0?(gap2>0?'cr':gap2>-av2*0.15?'cy':'cg'):'')+'">'+fmt(Math.round(fpTot))+'</td></tr>';
-    }
-    html+='</tbody></table></div></div></div>';
+    var avRaw=sv('avail_d'+i),av=gv('avail_d'+i),peak=getFpPeak(i),peakReq=peak.total,unit=getFpUnit(i),deptMissing=getFpDeptMissingCount(i,missing),scale=Math.max(av,peakReq,1);
+    if(D[i].type==='prod'){prodAvail+=av;if(avRaw==='')prodAvailComplete=false;}
+    if(avRaw===''&&peakReq>0)capMissing.push(i);
+    var stsTxt,stsCls,fillCol;
+    if(deptMissing>0){stsTxt='Incomplete';stsCls='sts-wn';fillCol='#d69e2e';if(D[i].type==='wh')whRisk++;}
+    else if(avRaw===''){stsTxt='No Capacity Data';stsCls='sts-wn';fillCol='#a0aec0';if(D[i].type==='wh'&&peakReq>0)whRisk++;}
+    else if(peakReq>av){stsTxt='Exceeded';stsCls='sts-er';fillCol='#e53e3e';if(D[i].type==='wh')whRisk++;}
+    else if(peakReq>=av*0.85&&peakReq>0){stsTxt='At Risk';stsCls='sts-wn';fillCol='#d69e2e';if(D[i].type==='wh')whRisk++;}
+    else{stsTxt=peakReq>0?'OK':'No Demand';stsCls=peakReq>0?'sts-ok':'sts-wn';fillCol=peakReq>0?'#48bb78':'#a0aec0';}
+    var pct=safeDiv(peakReq,scale)*100,avPct=safeDiv(av,scale)*100,peakWhen=peakReq>0?MONTHS[peak.mo]+' '+Y[peak.yi]:'--';
+    html+='<div><div class="fp-dept-summary" onclick="toggleFpDetail('+i+')"><div class="fp-dept-name">'+deptIcon(D[i].type)+escH(D[i].name)+'<div style="font-size:9px;color:#718096">'+escH(getFpBasisLabel(i))+' · peak '+peakWhen+'</div></div><div class="fp-dept-track"><div class="fp-dept-fill" style="width:'+(isFinite(pct)?pct.toFixed(1):0)+'%;background:'+fillCol+'">'+(peakReq>0?fmt(Math.round(peakReq))+' '+unit:'')+'</div>';
+    if(avRaw!=='')html+='<div class="fp-dept-avail-line" style="left:'+(isFinite(avPct)?avPct.toFixed(1):0)+'%"></div>';
+    html+='</div><div class="fp-dept-val">'+(avRaw!==''?'Avail: '+fmt(Math.round(av))+' '+unit:'No capacity data')+'</div><div class="fp-dept-status"><span class="sts '+stsCls+'">'+stsTxt+'</span></div><div class="fp-chevron" id="fp_chev_'+i+'">v</div></div>';
+    html+='<div class="fp-dept-detail" id="fp_dept_detail_'+i+'"></div></div>';
   }
   el.innerHTML=html;
-  setText('fp_prod_avail',prodAvail>0?fmt(Math.round(prodAvail))+' sq ft':'--');setText('fp_wh_avail',whAvail>0?fmt(Math.round(whAvail))+' sq ft':'--');
-  setText('fp_req_y1',totalPeakReq>0?fmt(Math.round(totalPeakReq))+' sq ft':'--');
-  var totalGap=totalPeakReq-totalAvail;setText('fp_gap_y1',totalPeakReq>0&&totalAvail>0?(totalGap>0?'+':'')+fmt(Math.round(totalGap))+' sq ft':'--');
+  var prodPeak=getFootprintGroupPeak('prod'),prodGap=prodPeak.total-prodAvail,prodWhen=prodPeak.total>0?MONTHS[prodPeak.mo]+' '+Y[prodPeak.yi]:'';
+  setText('fp_prod_avail',prodAvailComplete?fmt(Math.round(prodAvail))+' sq ft':'Incomplete');
+  setText('fp_prod_req',prodPeak.total>0?fmt(Math.round(prodPeak.total))+' sq ft'+(prodWhen?' · '+prodWhen:''):'--');
+  setText('fp_prod_gap',prodPeak.total>0&&prodAvailComplete?(prodGap>0?'+':'')+fmt(Math.round(prodGap))+' sq ft':'--');
+  setText('fp_wh_risk',whRisk+' area'+(whRisk===1?'':'s'));
+  var warn=document.getElementById('fp_data_warning');if(warn){
+    var issues=missing.slice(0,8).map(function(x){return escH(STATE.depts[x.di].name)+' / '+escH(STATE.mlis[x.mi].code)+': '+escH(x.field);});
+    capMissing.slice(0,4).forEach(function(di){issues.push(escH(STATE.depts[di].name)+': Available capacity');});
+    warn.innerHTML=issues.length?'<div class="infobox ib-y"><b>⚠ Footprint incomplete:</b> '+(missing.length+capMissing.length)+' required input'+((missing.length+capMissing.length)===1?' is':'s are')+' missing.<br><span style="font-size:10px">'+issues.join(' · ')+(missing.length+capMissing.length>issues.length?' · …':'')+'</span></div>':'<div class="infobox ib-g"><b>✓ Footprint inputs complete</b> for all products with demand.</div>';
+  }
 }
-function toggleFpDetail(i){var det=document.getElementById('fp_dept_detail_'+i),chev=document.getElementById('fp_chev_'+i);if(!det||!chev)return;if(det.classList.contains('open')){det.classList.remove('open');chev.textContent='v';}else{det.classList.add('open');chev.textContent='^';}}
+function renderFpDeptDetail(i){
+  var el=document.getElementById('fp_dept_detail_'+i);if(!el||el.dataset.rendered==='1')return;
+  var Y=STATE.years,avRaw=sv('avail_d'+i),av=gv('avail_d'+i),unit=getFpUnit(i),html='<div class="tbl-wrap"><table><thead><tr><th>Year</th><th>Peak Month</th><th>MLI</th><th class="r">Demand</th><th class="r">Dwell</th><th class="r">Avg WIP</th><th class="r">Peak WIP</th><th class="r">'+escH(getFpPerUnitLabel(i))+'</th><th class="r">Required '+unit+'</th></tr></thead><tbody>';
+  for(var y=0;y<Y.length;y++){
+    var fp=calcFpAreaAnnual(i,y),first=true;
+    for(var j=0;j<STATE.mlis.length;j++){var md=fp.mli[j];if(!md||md.dem<=0)continue;html+='<tr><td>'+(first?'<strong>'+Y[y]+'</strong>':'')+'</td><td>'+(first?MONTHS[fp.mo]:'')+'</td><td>'+escH(STATE.mlis[j].code)+'</td><td class="r">'+fmtD(md.dem)+'</td><td class="r">'+(md.dw>0?md.dw:'<span class="cr">Missing</span>')+'</td><td class="r">'+md.avg.toFixed(2)+'</td><td class="r">'+md.peak.toFixed(2)+'</td><td class="r">'+(md.space>0?md.space:'<span class="cr">Missing</span>')+'</td><td class="r"><strong>'+fmt(Math.round(md.req))+'</strong></td></tr>';first=false;}
+    var gap2=fp.total-av;html+='<tr style="background:#f7fafc;font-weight:700"><td><strong>'+Y[y]+' Peak</strong></td><td>'+MONTHS[fp.mo]+'</td><td colspan="6"></td><td class="r '+(avRaw!==''?(gap2>0?'cr':gap2>-av*0.15?'cy':'cg'):'')+'">'+fmt(Math.round(fp.total))+' '+unit+'</td></tr>';
+  }
+  el.innerHTML=html+'</tbody></table></div>';el.dataset.rendered='1';
+}
+function toggleFpDetail(i){var det=document.getElementById('fp_dept_detail_'+i),chev=document.getElementById('fp_chev_'+i);if(!det||!chev)return;if(det.classList.contains('open')){det.classList.remove('open');chev.textContent='v';}else{renderFpDeptDetail(i);det.classList.add('open');chev.textContent='^';}}
 function renderWIPTable(){
   var el=document.getElementById('wip_area_out');if(!el)return;
   var wipSel=document.getElementById('wip_area');var di=wipSel?parseInt(wipSel.value)||0:0;
-  var M=STATE.mlis,Y=STATE.years,wd=getWorkDays(),plf=getPLF(),hasData=false;
-  var html='<div class="tbl-wrap"><table><thead><tr><th>Year</th>';
+  var yearSel=document.getElementById('wip_year'),yi=yearSel?parseInt(yearSel.value)||0:0;
+  var M=STATE.mlis,hasData=false,unit=getFpUnit(di),missing=getFpDeptMissingCount(di);
+  var html=(missing>0?'<div class="infobox ib-y" style="margin-bottom:8px"><b>⚠ Incomplete:</b> '+missing+' Dwell/Space input'+(missing===1?' is':'s are')+' missing for this area.</div>':'')+'<div class="sub" style="margin-bottom:8px">'+escH(getFpBasisLabel(di))+' · Required space shown in '+unit+'.</div><div class="tbl-wrap"><table><thead><tr><th>Month</th>';
   for(var j=0;j<M.length;j++)html+='<th class="r" colspan="2" style="background:'+mliColor(j)+';color:white">'+escH(M[j].code)+'</th>';
-  html+='<th class="r" colspan="2" style="background:#2d3748;color:white">TOTAL</th></tr><tr><th></th>';
+  html+='<th class="r" colspan="3" style="background:#2d3748;color:white">TOTAL</th></tr><tr><th></th>';
   for(var j=0;j<M.length;j++)html+='<th class="r" style="background:#4a5568;color:white;font-size:10px">Avg</th><th class="r" style="background:#4a5568;color:white;font-size:10px">Peak</th>';
-  html+='<th class="r" style="background:#4a5568;color:white;font-size:10px">Avg</th><th class="r" style="background:#4a5568;color:white;font-size:10px">Peak</th></tr></thead><tbody>';
-  for(var y=0;y<Y.length;y++){
-    var tA=0,tP=0;html+='<tr><td><strong>'+Y[y]+'</strong></td>';
-    for(var j=0;j<M.length;j++){var dem=getDemAnnual(j,y),dw=getDW(j,di),avg=(wd>0&&dw>0&&dem>0)?dem*dw/wd:0,peak=avg*plf;tA+=avg;tP+=peak;if(avg>0)hasData=true;html+='<td class="r">'+(avg>0?avg.toFixed(2):'--')+'</td><td class="r">'+(peak>0?peak.toFixed(2):'--')+'</td>';}
-    html+='<td class="r">'+(tA>0?tA.toFixed(2):'--')+'</td><td class="r"><strong>'+(tP>0?tP.toFixed(2):'--')+'</strong></td></tr>';
+  html+='<th class="r" style="background:#4a5568;color:white;font-size:10px">Avg</th><th class="r" style="background:#4a5568;color:white;font-size:10px">Peak</th><th class="r" style="background:#4a5568;color:white;font-size:10px">Required '+unit+'</th></tr></thead><tbody>';
+  for(var mo=0;mo<12;mo++){
+    var fp=calcFpAreaMonthly(di,yi,mo);html+='<tr><td><strong>'+MONTHS[mo]+'</strong></td>';
+    for(var j=0;j<M.length;j++){var md=fp.mli[j];if(md.avg>0)hasData=true;html+='<td class="r">'+(md.avg>0?md.avg.toFixed(2):'--')+'</td><td class="r">'+(md.peak>0?md.peak.toFixed(2):'--')+'</td>';}
+    html+='<td class="r">'+(fp.totalAvg>0?fp.totalAvg.toFixed(2):'--')+'</td><td class="r"><strong>'+(fp.totalPeak>0?fp.totalPeak.toFixed(2):'--')+'</strong></td><td class="r"><strong>'+(fp.total>0?fmt(Math.round(fp.total)):'--')+'</strong></td></tr>';
   }
   html+='</tbody></table></div>';
-  if(!hasData){el.innerHTML='<div class="infobox ib-y"><b>No dwell data.</b> Add Dwell Days on Std Hours tab.</div>';return;}
+  if(!hasData){el.innerHTML='<div class="infobox ib-y"><b>No WIP data.</b> Add demand and Dwell Days on Std Hours &amp; Inputs.</div>';return;}
   el.innerHTML=html;
 }
 
@@ -2465,8 +2533,17 @@ function renderExecSummary(){
   var th='<tr><th>Department</th>';for(var y=0;y<Y.length;y++)th+='<th class="r">'+Y[y]+'</th>';th+='</tr>';setHTML('ex_util_thead',th);
   var uh='';for(var i=0;i<D.length;i++){if(D[i].type==='wh')continue;var avail=getNetAvail(i);uh+='<tr class="'+(D[i].type==='off'?'row-off':'row-prod')+'"><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td>';for(var y=0;y<Y.length;y++){var u=avail>0?getDeptLoadAnnual(i,y)/avail*100:NaN;uh+='<td class="r '+rag(u)+'">'+fmtP(u)+'</td>';}uh+='</tr>';}
   setHTML('ex_util_tbody',uh||'<tr><td colspan="20" style="color:#a0aec0;text-align:center">No data.</td></tr>');
-  var fh='';for(var i=0;i<D.length;i++){if(D[i].type==='off')continue;var av=gv('avail_d'+i),req=calcPeakFpArea(i),gap=req-av;var ft=(!av||!req)?'<span class="tag tag-b">No Data</span>':req>av?'<span class="tag tag-r">Exceeded</span>':req>=av*0.85?'<span class="tag tag-y">At Risk</span>':'<span class="tag tag-g">OK</span>';fh+='<tr class="'+(D[i].type==='wh'?'row-wh':'row-prod')+'"><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td><td>'+typeLabel(D[i].type)+'</td><td class="r">'+(av>0?fmt(Math.round(av))+' sq ft':'--')+'</td><td class="r">'+(req>0?fmt(Math.round(req))+' sq ft':'--')+'</td><td class="r '+(req>0&&av>0?(gap>0?'cr':gap>-av*0.15?'cy':'cg'):'')+'">'+( req>0&&av>0?(gap>0?'+':'')+fmt(Math.round(gap))+' sq ft':'--')+'</td><td>'+ft+'</td></tr>';}
-  setHTML('ex_fp_tbody',fh||'<tr><td colspan="6" style="color:#a0aec0;text-align:center">No data.</td></tr>');
+  var fh='',fpMissingAll=getFpMissingInputs();for(var i=0;i<D.length;i++){
+    if(D[i].type==='off')continue;
+    var avRaw=sv('avail_d'+i),av=gv('avail_d'+i),peak=getFpPeak(i),req=peak.total,gap=req-av,unit=getFpUnit(i),miss=getFpDeptMissingCount(i,fpMissingAll),ft;
+    if(miss>0)ft='<span class="tag tag-y">Incomplete</span>';
+    else if(avRaw==='')ft='<span class="tag tag-b">No Capacity Data</span>';
+    else if(req>av)ft='<span class="tag tag-r">Exceeded</span>';
+    else if(req>=av*0.85&&req>0)ft='<span class="tag tag-y">At Risk</span>';
+    else ft=req>0?'<span class="tag tag-g">OK</span>':'<span class="tag tag-b">No Demand</span>';
+    fh+='<tr class="'+(D[i].type==='wh'?'row-wh':'row-prod')+'"><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td><td>'+escH(getFpBasisLabel(i))+'</td><td class="r">'+(avRaw!==''?fmt(Math.round(av))+' '+unit:'--')+'</td><td class="r">'+(req>0?fmt(Math.round(req))+' '+unit:'--')+'</td><td>'+(req>0?MONTHS[peak.mo]+' '+Y[peak.yi]:'--')+'</td><td class="r '+(req>0&&avRaw!==''?(gap>0?'cr':gap>-av*0.15?'cy':'cg'):'')+'">'+(req>0&&avRaw!==''?(gap>0?'+':'')+fmt(Math.round(gap))+' '+unit:'--')+'</td><td>'+ft+'</td></tr>';
+  }
+  setHTML('ex_fp_tbody',fh||'<tr><td colspan="7" style="color:#a0aec0;text-align:center">No data.</td></tr>');
   var hcH='';for(var i=0;i<D.length;i++){if(D[i].type==='wh')continue;var fteH2=D[i].type==='off'?hcOff:hcOps,curHC=gv('fte_d'+i)||0,wr=0,wy2='--';for(var y=0;y<Y.length;y++){var load=getDeptLoadAnnual(i,y),req=load>0?Math.ceil(load/(fteH2*tgt)):0;if(req>wr){wr=req;wy2=Y[y];}}var gap=wr-curHC;hcH+='<tr class="'+(D[i].type==='off'?'row-off':'row-prod')+'"><td><strong>'+deptIcon(D[i].type)+escH(D[i].name)+'</strong></td><td class="r">'+(curHC>0?curHC:'--')+'</td><td class="r"><strong>'+wr+'</strong></td><td class="r '+(gap>0?'cr':'cg')+'">'+(gap>0?'+'+gap:gap)+'</td><td>'+wy2+'</td><td>'+(wr===0?'<span class="tag tag-b">--</span>':gap>0?'<span class="tag tag-r">Need +'+gap+'</span>':'<span class="tag tag-g">OK</span>')+'</td></tr>';}
   setHTML('ex_hc_tbody',hcH||'<tr><td colspan="6" style="color:#a0aec0;text-align:center">No data.</td></tr>');
   var rpaH='<div class="tbl-wrap"><table class="rpa-table"><thead><tr><th>Department</th><th>Scenario</th><th class="r">xMult</th><th>Trigger</th><th class="r">FTE Plan</th><th>Key Milestones</th><th>Owner</th><th>HC Gap?</th></tr></thead><tbody>';
@@ -2555,18 +2632,18 @@ function doSave(){
 }
 function collectAllData(){
   var data={
-    version:'6.75',ts:Date.now(),resolution:RESOLUTION,wfView:wfView,gcMode:gcMode,sfVisible:sfVisible,dwVisible:dwVisible,
+    version:'6.76',ts:Date.now(),resolution:RESOLUTION,wfView:wfView,gcMode:gcMode,sfVisible:sfVisible,dwVisible:dwVisible,
     leadTimeAdjust:leadTimeAdjust,ltSpreadMode:ltSpreadMode,rampMetric:rampMetric,
     ltConfig:{phases:{},deptMap:{}},
     state:{supplier:STATE.supplier,program:STATE.program,date:STATE.date,auditor:STATE.auditor,startYr:STATE.startYr,numYrs:STATE.numYrs,mlis:STATE.mlis,depts:STATE.depts,clItems:STATE.clItems,years:STATE.years},
     setup:{supplier:sv('cfg_supplier'),program:sv('cfg_program'),date:sv('cfg_date'),auditor:sv('cfg_auditor'),startYr:sv('cfg_start_yr'),numYrs:sv('cfg_num_yrs')},
     demand:{annual:{},quarterly:{},monthly:{}},
     capacity:{},oee:{},demcap:{},stdHours:{},copyFactor:{},sqFt:{},dwell:{},efficiency:{},
-    footprint:{wdays:sv('fp_wdays'),plf:sv('fp_plf'),avail:{},notes:{}},
+    footprint:{wdays:sv('fp_wdays'),plf:sv('fp_plf'),avail:{},notes:{},basis:{}},
     headcount:{ops:sv('hc_ops'),off:sv('hc_off'),tgt:sv('hc_tgt'),lead:sv('hc_lead')},
     checklist:{},scenarios:{wf_dept:sv('wf_dept'),wf_view:wfView},
     rampUp:{},util:{lc_yr:sv('lc_yr')||loadYearSel,lc_period:sv('lc_period')||loadPeriodSel},gap:{gc_dept:sv('gc_dept'),gc_mode:gcMode},
-    wip:{area:sv('wip_area')},actionLog:[]
+    wip:{area:sv('wip_area'),year:sv('wip_year')},actionLog:[]
   };
   for(var mi=0;mi<STATE.mlis.length;mi++){
     data.ltConfig.phases[mi]=deepCopy(getPhases(mi));
@@ -2598,7 +2675,7 @@ function collectAllData(){
     }
     data.sqFt['d'+i]={};for(var j=0;j<STATE.mlis.length;j++)data.sqFt['d'+i]['m'+j]=sv('sf_m'+j+'_d'+i);
     if(STATE.depts[i].type!=='off'){data.dwell['d'+i]={};for(var j=0;j<STATE.mlis.length;j++)data.dwell['d'+i]['m'+j]=sv('dw_m'+j+'_d'+i);}
-    if(STATE.depts[i].type!=='off'){data.footprint.avail['d'+i]=sv('avail_d'+i);data.footprint.notes['d'+i]=sv('fp_note_d'+i);}
+    if(STATE.depts[i].type!=='off'){data.footprint.avail['d'+i]=sv('avail_d'+i);data.footprint.notes['d'+i]=sv('fp_note_d'+i);if(STATE.depts[i].type==='wh')data.footprint.basis['d'+i]=getFpBasis(i);}
   }
   for(var k=0;k<STATE.clItems.length;k++){var el=document.getElementById('cl_'+k);data.checklist['k'+k]={status:el?el.value:'0',owner:sv('cl_own_'+k),plan:sv('cl_plan_'+k),date:sv('cl_date_'+k)};}
   document.querySelectorAll('#al_tbody tr').forEach(function(r){
@@ -2673,7 +2750,14 @@ function restoreValues(data){
   if(data.sqFt)for(var i=0;i<STATE.depts.length;i++){var sfd=data.sqFt['d'+i];if(!sfd)continue;for(var j=0;j<STATE.mlis.length;j++)sval('sf_m'+j+'_d'+i,sfd['m'+j]);}
   if(data.dwell)for(var i=0;i<STATE.depts.length;i++){var dd=data.dwell['d'+i];if(!dd)continue;for(var j=0;j<STATE.mlis.length;j++)sval('dw_m'+j+'_d'+i,dd['m'+j]);}
   if(data.efficiency)for(var i=0;i<STATE.depts.length;i++){var ed=data.efficiency['d'+i];if(!ed)continue;sval('eff_hol_d'+i,ed.hol);sval('eff_pdt_d'+i,ed.pdt);sval('eff_udt_d'+i,ed.udt);sval('eff_trn_d'+i,ed.trn);sval('eff_rwk_d'+i,ed.rwk);}
-  if(data.footprint){sval('fp_wdays',data.footprint.wdays);sval('fp_plf',data.footprint.plf);if(data.footprint.avail)for(var i=0;i<STATE.depts.length;i++)sval('avail_d'+i,data.footprint.avail['d'+i]);if(data.footprint.notes)for(var i=0;i<STATE.depts.length;i++)sval('fp_note_d'+i,data.footprint.notes['d'+i]);}
+  if(data.footprint){
+    sval('fp_wdays',data.footprint.wdays);sval('fp_plf',data.footprint.plf);
+    if(data.footprint.avail)for(var i=0;i<STATE.depts.length;i++)sval('avail_d'+i,data.footprint.avail['d'+i]);
+    if(data.footprint.notes)for(var i=0;i<STATE.depts.length;i++)sval('fp_note_d'+i,data.footprint.notes['d'+i]);
+    for(var i=0;i<STATE.depts.length;i++)if(STATE.depts[i].type==='wh'){
+      var basis=data.footprint.basis&&data.footprint.basis['d'+i]==='pallet'?'pallet':'cuft';sval('wh_basis_d'+i,basis);updateWarehouseBasisUI(i);
+    }
+  }
   if(data.headcount){sval('hc_ops',data.headcount.ops);sval('hc_off',data.headcount.off);sval('hc_tgt',data.headcount.tgt);sval('hc_lead',data.headcount.lead);}
   if(data.checklist)for(var k=0;k<STATE.clItems.length;k++){var ck=data.checklist['k'+k];if(!ck)continue;var el=document.getElementById('cl_'+k);if(el)el.value=ck.status;sval('cl_own_'+k,ck.owner);sval('cl_plan_'+k,ck.plan);sval('cl_date_'+k,ck.date);}
   if(data.scenarios)sval('wf_dept',data.scenarios.wf_dept);
@@ -2690,8 +2774,8 @@ function restoreValues(data){
       if(Array.isArray(rd.milestones)&&rd.milestones.length>0){var tb=document.getElementById('ramp_ms_tbody_d'+i);if(tb){tb.innerHTML='';rd.milestones.slice(0,100).forEach(function(ms){if(ms&&typeof ms==='object')addRampMilestone(i,cleanText(ms.date,20),cleanText(ms.desc,200),clampNum(ms.fte,0,10000,0),clampNum(ms.add,0,1000000000,0),ms.override===true);});}}
     }catch(e){console.warn('Ramp restore error dept '+i,e);}
   }
-  if(data.wip&&data.wip.area)sval('wip_area',data.wip.area);
-  if(sfVisible){var sec=document.getElementById('sfsec');if(sec)sec.classList.remove('hidden');var btn=document.getElementById('sfbtn');if(btn)btn.textContent='Hide Sq Ft Per Unit';}
+  if(data.wip){if(data.wip.area)sval('wip_area',data.wip.area);if(data.wip.year!==undefined)sval('wip_year',data.wip.year);}
+  if(sfVisible){var sec=document.getElementById('sfsec');if(sec)sec.classList.remove('hidden');var btn=document.getElementById('sfbtn');if(btn)btn.textContent='Hide Space Per Unit';}
   if(dwVisible){var sec2=document.getElementById('dwsec');if(sec2)sec2.classList.remove('hidden');var btn2=document.getElementById('dwbtn');if(btn2)btn2.textContent='Hide Dwell Days Per Unit';}
   if(data.actionLog&&data.actionLog.length>0){var tb2=document.getElementById('al_tbody');if(tb2){tb2.innerHTML='';data.actionLog.forEach(function(row){addALRow(row.action,row.cat,row.owner,row.due,row.pri,row.stat);});}}
   sval('lc_yr',loadYearSel);sval('lc_period',loadPeriodSel);
@@ -2716,7 +2800,7 @@ function exportData(){
   var safeSupplier=STATE.supplier.replace(/[^a-zA-Z0-9_\-]/g,'_');
   var json=JSON.stringify(collectAllData(),null,2),blob=new Blob([json],{type:'application/json'});
   var url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='Capacity_Workbook_v675_'+safeSupplier+'_'+new Date().toISOString().slice(0,10)+'.json';
+  a.href=url;a.download='Capacity_Workbook_v676_'+safeSupplier+'_'+new Date().toISOString().slice(0,10)+'.json';
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 function importData(event){
