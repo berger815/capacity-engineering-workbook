@@ -1,0 +1,1231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A self-contained safety stock and replenishment policy workbook.">
+<title>Safety Stock &amp; Replenishment Policy Workbook v3.0</title>
+<style>
+  :root {
+    --ge-blue: #005EB8;
+    --ge-dark: #1a1a2e;
+    --ge-light: #f0f4f8;
+    --ge-accent: #00a3e0;
+    --ge-green: #00875a;
+    --ge-red: #de350b;
+    --ge-yellow: #ff991f;
+    --ge-border: #cbd5e0;
+    --ge-card: #ffffff;
+    --ge-text: #1a202c;
+    --ge-muted: #718096;
+    --radius: 8px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--ge-light); color: var(--ge-text); font-size: 14px; }
+
+  /* HEADER */
+  .app-header { background: var(--ge-blue); color: #fff; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .app-header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.3px; }
+  .app-header .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* BUTTONS */
+  .btn { padding: 8px 16px; border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: #fff; color: var(--ge-blue); }
+  .btn-primary:hover { background: #e8f0fb; }
+  .btn-success { background: var(--ge-green); color: #fff; }
+  .btn-success:hover { background: #006644; }
+  .btn-danger { background: var(--ge-red); color: #fff; }
+  .btn-danger:hover { background: #bf2600; }
+  .btn-accent { background: var(--ge-accent); color: #fff; }
+  .btn-accent:hover { background: #0086b8; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-icon { background: transparent; border: 1px solid var(--ge-border); color: var(--ge-muted); padding: 5px 8px; border-radius: 6px; cursor: pointer; }
+  .btn-icon:hover { background: var(--ge-light); color: var(--ge-red); }
+
+  /* LAYOUT */
+  .container { max-width: 1600px; margin: 0 auto; padding: 20px 16px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--ge-border); margin-bottom: 20px; }
+  .tab { padding: 10px 22px; cursor: pointer; font-weight: 600; color: var(--ge-muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; font-size: 13px; }
+  .tab.active { color: var(--ge-blue); border-bottom-color: var(--ge-blue); }
+  .tab:hover:not(.active) { color: var(--ge-text); background: #f7fafc; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--ge-card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; border: 1px solid var(--ge-border); }
+  .card-title { font-size: 15px; font-weight: 700; color: var(--ge-blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-title .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: #ebf4ff; color: var(--ge-blue); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media(max-width: 900px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media(max-width: 600px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+  /* FORM ELEMENTS */
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--ge-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-group input, .form-group select, .form-group textarea {
+    border: 1px solid var(--ge-border); border-radius: 6px; padding: 8px 10px; font-size: 13px;
+    color: var(--ge-text); background: #fff; transition: border 0.2s; width: 100%;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--ge-accent); box-shadow: 0 0 0 3px rgba(0,163,224,0.12); }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .input-hint { font-size: 11px; color: var(--ge-muted); margin-top: 2px; }
+
+  /* GLOBAL SETTINGS */
+  .settings-bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+
+  /* PARTS TABLE */
+  .table-wrapper { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--ge-border); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1400px; }
+  thead tr { background: var(--ge-blue); color: #fff; }
+  thead th { padding: 10px 8px; text-align: left; font-weight: 600; white-space: nowrap; font-size: 11px; letter-spacing: 0.3px; position: sticky; top: 0; z-index: 2; }
+  tbody tr { border-bottom: 1px solid #edf2f7; transition: background 0.15s; }
+  tbody tr:hover { background: #ebf4ff; }
+  tbody tr.warning-row { background: #fffbeb; }
+  tbody tr.error-row { background: #fff5f5; }
+  td { padding: 7px 8px; vertical-align: middle; }
+  td input, td select { border: 1px solid var(--ge-border); border-radius: 5px; padding: 5px 7px; font-size: 12px; width: 100%; min-width: 70px; background: #fff; }
+  td input:focus, td select:focus { outline: none; border-color: var(--ge-accent); }
+  td.computed { background: #f7fafc; color: var(--ge-text); font-weight: 600; text-align: right; }
+  td.computed.highlight { background: #ebf4ff; color: var(--ge-blue); }
+  td.computed.warn { background: #fffbeb; color: #7d5a00; }
+  td.computed.ok { background: #e3fcef; color: var(--ge-green); }
+  .flag-badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .flag-normal { background: #e3fcef; color: var(--ge-green); }
+  .flag-slow { background: #fffbeb; color: #7d5a00; }
+  .flag-intermittent { background: #fff0e6; color: #b84c00; }
+  .flag-error { background: #ffebe6; color: var(--ge-red); }
+
+  /* KPI STRIP */
+  .kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
+  @media(max-width:900px){ .kpi-strip { grid-template-columns: repeat(3,1fr); } }
+  .kpi-card { background: var(--ge-card); border-radius: var(--radius); border: 1px solid var(--ge-border); padding: 14px 16px; box-shadow: var(--shadow); }
+  .kpi-label { font-size: 11px; color: var(--ge-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kpi-value { font-size: 22px; font-weight: 700; color: var(--ge-blue); margin-top: 4px; }
+  .kpi-sub { font-size: 11px; color: var(--ge-muted); margin-top: 2px; }
+
+  /* ALERTS */
+  .alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; display: flex; align-items: flex-start; gap: 10px; }
+  .alert-info { background: #ebf4ff; border-left: 4px solid var(--ge-accent); color: #1a365d; }
+  .alert-warn { background: #fffbeb; border-left: 4px solid var(--ge-yellow); color: #7d5a00; }
+  .alert-error { background: #ffebe6; border-left: 4px solid var(--ge-red); color: #7a1000; }
+
+  /* HELP TABLE */
+  .help-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .help-table th { background: var(--ge-blue); color: #fff; padding: 9px 12px; text-align: left; }
+  .help-table td { padding: 9px 12px; border-bottom: 1px solid #edf2f7; }
+  .help-table tr:nth-child(even) td { background: #f7fafc; }
+  .formula { font-family: 'Courier New', monospace; background: #edf2f7; padding: 2px 7px; border-radius: 4px; font-size: 12px; }
+
+  /* SUPPLIER SECTION */
+  .supplier-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:800px){ .supplier-grid { grid-template-columns: 1fr; } }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: #b0bec5; border-radius: 4px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 10px; padding: 28px; max-width: 520px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+  .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--ge-blue); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+  textarea.json-preview { width: 100%; height: 200px; font-family: monospace; font-size: 11px; border: 1px solid var(--ge-border); border-radius: 6px; padding: 10px; resize: vertical; }
+
+  .section-divider { border: none; border-top: 2px solid var(--ge-border); margin: 18px 0; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .mt-2 { margin-top: 8px; }
+  .flex-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .spacer { flex: 1; }
+
+  /* DEMAND PATTERN TOOLTIP */
+  [data-tooltip] { position: relative; cursor: help; }
+  [data-tooltip]:hover::after { content: attr(data-tooltip); position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #1a202c; color: #fff; padding: 6px 10px; border-radius: 5px; font-size: 11px; white-space: nowrap; z-index: 100; pointer-events: none; }
+
+  /* CAPACITY WORKBOOK VISUAL SYSTEM */
+  body { background:#f0f2f5; color:#1a1a2e; font-size:13px; }
+  .app-header { background:linear-gradient(135deg,#1a1a2e,#0f3460); padding:18px 24px; box-shadow:none; flex-wrap:wrap; }
+  .app-header h1 { font-size:17px; letter-spacing:0; }
+  .app-header .subtitle { font-size:11px; color:#a0aec0; opacity:1; }
+  .header-title-row { display:flex; align-items:center; gap:10px; }
+  .version-badge { background:#e94560; color:white; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; }
+  .save-meta { font-size:10px; color:#68d391; margin-top:3px; }
+  .container { max-width:none; margin:0; padding:0; }
+  .tabs { background:#16213e; border:0; margin:0; padding:0 24px; overflow-x:auto; }
+  .tab { color:#a0aec0; padding:10px 14px; border-bottom:3px solid transparent; margin:0; font-size:11px; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+  .tab.active { color:#63b3ed; border-bottom-color:#63b3ed; }
+  .tab:hover:not(.active) { color:white; background:transparent; }
+  .tab-content { padding:20px 24px; }
+  .card { border:0; border-left:4px solid #63b3ed; border-radius:8px; padding:16px 20px; margin-bottom:16px; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+  .card.grn { border-left-color:#38a169; }
+  .card.ylw { border-left-color:#d69e2e; }
+  .card.pur { border-left-color:#805ad5; }
+  .card.red { border-left-color:#e53e3e; }
+  .card-title { color:#1a1a2e; font-size:13px; margin-bottom:12px; }
+  .card-title .badge { background:#ebf8ff; color:#2b6cb0; border:1px solid #bee3f8; }
+  .btn { border-radius:5px; padding:6px 14px; font-size:11px; }
+  .btn-primary { background:#718096; color:white; }
+  .btn-accent { background:#3182ce; }
+  .btn-success { background:#38a169; }
+  .btn-danger { background:#e53e3e; }
+  .kpi-strip { gap:12px; }
+  .kpi-card { border:0; border-top:4px solid #63b3ed; border-radius:8px; text-align:center; padding:14px 16px; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+  .kpi-card:nth-child(2) { border-top-color:#38a169; }
+  .kpi-card:nth-child(3) { border-top-color:#805ad5; }
+  .kpi-card:nth-child(4) { border-top-color:#d69e2e; }
+  .kpi-card:nth-child(5) { border-top-color:#e53e3e; }
+  .kpi-value { font-size:26px; font-weight:800; color:#1a1a2e; }
+  .table-wrapper { border:1px solid #e2e8f0; background:white; border-radius:8px; }
+  table { min-width:0; }
+  #parts-table { min-width:1800px; }
+  thead tr, .help-table th { background:#1a1a2e; }
+  thead th { background:#1a1a2e !important; padding:7px 9px; text-transform:uppercase; }
+  td { border-bottom:1px solid #e2e8f0; }
+  .table-wrapper td:has(> input), .table-wrapper td:has(> select) { background:#ebf8ff; }
+  td input, td select, .form-group input, .form-group select, .form-group textarea { border-color:#cbd5e0; border-radius:4px; }
+  .input-col { background:#ebf8ff; }
+  .computed { background:#f7fafc !important; }
+  .computed.highlight { background:#faf5ff !important; color:#6b46c1 !important; }
+  .alert-info { background:#ebf8ff; border:1px solid #bee3f8; color:#1a365d; }
+  .alert-warn { background:#fffff0; border:1px solid #faf089; color:#975a16; }
+  .alert-error { background:#fff5f5; border:1px solid #fed7d7; color:#c53030; }
+  .alert-good { background:#f0fff4; border:1px solid #c6f6d5; color:#276749; }
+  .guide-hero { background:linear-gradient(135deg,#1a365d,#44337a); color:white; border-radius:10px; padding:22px 24px; margin-bottom:16px; box-shadow:0 4px 12px rgba(26,54,93,.2); }
+  .guide-hero h2 { font-size:21px; margin-bottom:6px; }
+  .guide-hero p { font-size:12px; line-height:1.6; color:#e9d8fd; max-width:900px; }
+  .guide-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .guide-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  .guide-step { background:white; border-radius:8px; padding:14px 16px; border-top:4px solid #4299e1; box-shadow:0 2px 6px rgba(0,0,0,.06); }
+  .guide-step:nth-child(2) { border-top-color:#805ad5; }
+  .guide-step:nth-child(3) { border-top-color:#38a169; }
+  .guide-step h3 { font-size:13px; margin-bottom:5px; }
+  .guide-step p { font-size:11px; line-height:1.5; color:#4a5568; }
+  .status-line { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .status-chip { display:inline-block; border-radius:12px; padding:3px 8px; background:#edf2f7; color:#4a5568; font-size:9px; font-weight:700; }
+  @media(max-width:900px){
+    .app-header { align-items:flex-start; }
+    .header-actions { width:100%; flex-basis:100%; }
+    .tabs { padding:0 12px; }
+    .tab-content { padding:14px 12px; }
+    .guide-grid { grid-template-columns:1fr; }
+  }
+  @media(max-width:600px){
+    .app-header { padding:14px 16px; }
+    .app-header > div:first-child { width:100%; }
+    .header-actions { display:grid; grid-template-columns:1fr 1fr; flex-shrink:0; }
+    .header-actions .btn { justify-content:center; min-width:0; }
+    .tabs { padding:0 6px; }
+    .tab { padding:10px 8px; font-size:9px; }
+    .kpi-strip { grid-template-columns:1fr 1fr; }
+    .kpi-card:last-child { grid-column:1/-1; }
+  }
+</style>
+
+</head>
+<body>
+
+<!-- APP HEADER -->
+<div class="app-header">
+  <div>
+    <div class="header-title-row"><h1>Safety Stock &amp; Replenishment Policy Workbook</h1><span class="version-badge">v3.0</span></div>
+    <div class="subtitle">Inventory policy engineering — transparent assumptions, model screening, and review controls</div>
+    <div class="save-meta" id="save-meta">Ready</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+    <button class="btn btn-primary" onclick="openImportModal()">Import JSON</button>
+    <button class="btn btn-success" onclick="addRow()">+ Add Part</button>
+    <button class="btn btn-accent" onclick="recalcAll()">Recalculate</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('tab-dashboard')">Executive Summary</div>
+    <div class="tab" onclick="showTab('tab-supplier')">Setup</div>
+    <div class="tab" onclick="showTab('tab-settings')">Policy Settings</div>
+    <div class="tab" onclick="showTab('tab-parts')">Parts &amp; Calculations</div>
+    <div class="tab" onclick="showTab('tab-help')">User Guide</div>
+  </div>
+
+  <!-- DASHBOARD TAB -->
+  <div id="tab-dashboard" class="tab-content active">
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Parts</div>
+        <div class="kpi-value" id="kpi-parts">0</div>
+        <div class="kpi-sub">Active line items</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Safety Stock Value</div>
+        <div class="kpi-value" id="kpi-ss-cost">$0</div>
+        <div class="kpi-sub">Safety stock × unit cost</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Policy Position Value</div>
+        <div class="kpi-value" id="kpi-rop-cost">$0</div>
+        <div class="kpi-sub">Trigger/target × unit cost</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Model Reviews</div>
+        <div class="kpi-value" id="kpi-slow">0</div>
+        <div class="kpi-sub">Slow, variable, or assumed data</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Blocking Errors</div>
+        <div class="kpi-value" id="kpi-warnings" style="color:var(--ge-yellow)">0</div>
+        <div class="kpi-sub">Outputs excluded from totals</div>
+      </div>
+    </div>
+
+    <div class="card ylw">
+      <div class="card-title">Active Alerts &amp; Decisions</div>
+      <div id="alert-panel">
+        <div class="alert alert-info">ℹ️ Add parts in the <strong>Parts &amp; Calculations</strong> tab to populate the dashboard.</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card pur">
+        <div class="card-title">Parts by Model / Demand Pattern</div>
+        <div id="pattern-summary" style="padding:10px 0;"></div>
+      </div>
+      <div class="card grn">
+        <div class="card-title">Top 5 Parts by Safety Stock Value</div>
+        <div id="top5-table"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPPLIER TAB -->
+  <div id="tab-supplier" class="tab-content">
+    <div class="card">
+      <div class="card-title">Supplier / Project Header Information</div>
+      <div class="alert alert-info">ℹ️ This information is saved with your JSON export and provides context for the inventory analysis.</div>
+      <div class="supplier-grid" style="margin-bottom:16px;">
+        <div class="form-group"><label>Project / Site Name</label><input type="text" id="sup-project" placeholder="e.g. 7FA.05 Gas Turbine Fleet"></div>
+        <div class="form-group"><label>Facility / Plant</label><input type="text" id="sup-facility" placeholder="e.g. Power Station Alpha"></div>
+        <div class="form-group"><label>Prepared By</label><input type="text" id="sup-preparedby" placeholder="Name or team"></div>
+      </div>
+      <div class="supplier-grid" style="margin-bottom:16px;">
+        <div class="form-group"><label>Date Prepared</label><input type="date" id="sup-date"></div>
+        <div class="form-group"><label>Revision Number</label><input type="text" id="sup-revision" placeholder="e.g. Rev 1.0"></div>
+        <div class="form-group"><label>Analysis Period (Years)</label><input type="number" id="sup-period" placeholder="e.g. 1" min="0.1" step="0.1" value="1"></div>
+      </div>
+      <hr class="section-divider">
+      <div class="card-title">Primary Supplier Details</div>
+      <div class="supplier-grid" style="margin-bottom:16px;">
+        <div class="form-group"><label>Primary Supplier Name</label><input type="text" id="sup-name" placeholder="e.g. GE Vernova Parts"></div>
+        <div class="form-group"><label>Supplier Contact</label><input type="text" id="sup-contact" placeholder="Name / email"></div>
+        <div class="form-group"><label>Supplier Phone</label><input type="text" id="sup-phone" placeholder="+1 (xxx) xxx-xxxx"></div>
+      </div>
+      <div class="supplier-grid" style="margin-bottom:16px;">
+        <div class="form-group"><label>Supplier Address</label><input type="text" id="sup-address" placeholder="Street address"></div>
+        <div class="form-group"><label>City / State / Country</label><input type="text" id="sup-city" placeholder="City, State, Country"></div>
+        <div class="form-group"><label>Contract / PO Reference</label><input type="text" id="sup-contract" placeholder="e.g. PO-2024-00123"></div>
+      </div>
+      <hr class="section-divider">
+      <div class="card-title">Notes &amp; Assumptions</div>
+      <div class="form-group">
+        <label>General Notes</label>
+        <textarea id="sup-notes" placeholder="Record key assumptions, data sources, known limitations, or review schedule here..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings" class="tab-content">
+    <div class="card pur">
+      <div class="card-title">Global Calculation Settings</div>
+      <div class="grid-3">
+        <div class="form-group">
+          <label>Default Service Level</label>
+          <input type="number" id="g-sl" value="0.95" min="0.5" max="0.9999" step="0.001">
+          <span class="input-hint">Used when no part-level SL is specified (0.5–0.9999)</span>
+        </div>
+        <div class="form-group">
+          <label>Round outputs to whole units?</label>
+          <select id="g-round">
+            <option value="1">Yes — round up (ceiling)</option>
+            <option value="0">No — keep fractional</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Review Policy</label>
+          <select id="g-review">
+            <option value="continuous">Continuous Review (s,Q)</option>
+            <option value="periodic">Periodic Review (s,S)</option>
+          </select>
+          <span class="input-hint">Periodic review protects lead time + review period</span>
+        </div>
+        <div class="form-group">
+          <label>Review Period (days) — Periodic only</label>
+          <input type="number" id="g-review-period" value="7" min="1" step="1">
+          <span class="input-hint">Days between stock reviews (e.g. 7 = weekly)</span>
+        </div>
+        <div class="form-group">
+          <label>Service Level Metric</label>
+          <select id="g-sl-type">
+            <option value="cycle">Cycle Service Level (CSL) — P(no stockout per cycle)</option>
+            <option value="fill">Fill Rate (β) — % of demand units filled</option>
+          </select>
+          <span class="input-hint">Requires part-level order quantity and continuous review</span>
+        </div>
+        <div class="form-group">
+          <label>Currency Symbol</label>
+          <input type="text" id="g-currency" value="$" maxlength="3">
+        </div>
+      </div>
+      <hr class="section-divider">
+      <div class="card-title">⚠️ Demand Classification Thresholds <span class="badge">Auto-flags parts</span></div>
+      <div class="grid-3">
+        <div class="form-group">
+          <label>Slow-mover threshold (units/year ≤)</label>
+          <input type="number" id="g-slow-thresh" value="5" min="0" step="1">
+          <span class="input-hint">Parts at or below this demand are flagged as slow-movers</span>
+        </div>
+        <div class="form-group">
+          <label>Intermittent CV threshold (CV ≥)</label>
+          <input type="number" id="g-cv-thresh" value="0.5" min="0" step="0.05">
+          <span class="input-hint">Coefficient of Variation = σD/D. High CV = lumpy demand</span>
+        </div>
+        <div class="form-group">
+          <label>Default annual demand CV (%)</label>
+          <input type="number" id="g-sigma-pct" value="20" min="0" max="200" step="1">
+          <span class="input-hint">Estimates annual σ when history is missing; always flagged as assumed</span>
+        </div>
+        <div class="form-group">
+          <label>Slow-mover model</label>
+          <select id="g-slow-model">
+            <option value="poisson">Poisson quantile (CSL only)</option>
+            <option value="screen">Screen only — require manual review</option>
+          </select>
+          <span class="input-hint">Poisson uses discrete demand over the protection interval</span>
+        </div>
+        <div class="form-group">
+          <label>Auto-save in this browser?</label>
+          <select id="g-autosave">
+            <option value="1">Yes — save locally</option>
+            <option value="0">No</option>
+          </select>
+          <span class="input-hint">Use JSON export for controlled records and handoffs</span>
+        </div>
+      </div>
+      <hr class="section-divider">
+      <div class="flex-row">
+        <button class="btn btn-accent" onclick="recalcAll()">↻ Apply &amp; Recalculate All</button>
+        <span class="input-hint" style="margin-left:8px;">Settings apply to all parts on next recalculation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTS TAB -->
+  <div id="tab-parts" class="tab-content">
+    <div class="flex-row" style="margin-bottom:14px;">
+      <div class="alert alert-info" style="flex:1;margin-bottom:0;">
+        <strong>Blue input columns</strong> accept your data. <strong>Grey columns</strong> are calculated. Enter annual demand σ and lead-time σ from history when available; assumptions and model overrides are surfaced for review.
+      </div>
+      <button class="btn btn-success btn-sm" onclick="addRow()">＋ Add Part</button>
+      <button class="btn btn-accent btn-sm" onclick="recalcAll()">↻ Recalculate</button>
+    </div>
+    <div class="table-wrapper">
+      <table id="parts-table">
+        <thead>
+          <tr>
+            <th style="width:32px;">#</th>
+            <th style="min-width:130px;">Part Number</th>
+            <th style="min-width:160px;">Description</th>
+            <th style="min-width:120px;">Vendor</th>
+            <th style="width:55px;">UOM</th>
+            <th style="width:90px;">Unit Cost</th>
+            <th style="width:70px;">BOM Qty</th>
+            <th style="width:75px;">Order Qty</th>
+            <th style="width:90px;">Demand (units/yr)</th>
+            <th style="width:80px;">σD (units/yr)</th>
+            <th style="width:80px;">Lead Time (wks)</th>
+            <th style="width:80px;">σL (wks)</th>
+            <th style="width:75px;">Service Level</th>
+            <th style="width:75px;">Review Period (days)</th>
+            <th style="width:90px;">Method</th>
+            <th style="width:75px;background:#1e4080;">D (units/day)</th>
+            <th style="width:75px;background:#1e4080;">σD (day)</th>
+            <th style="width:75px;background:#1e4080;">L (days)</th>
+            <th style="width:75px;background:#1e4080;">σL (days)</th>
+            <th style="width:55px;background:#1e4080;">z</th>
+            <th style="width:75px;background:#1e4080;">μ Protect.</th>
+            <th style="width:75px;background:#1e4080;">σ Protect.</th>
+            <th style="width:65px;background:#1e4080;">SS</th>
+            <th style="width:65px;background:#1e4080;">Trigger / Target</th>
+            <th style="width:90px;background:#1e4080;">SS Value</th>
+            <th style="width:90px;background:#1e4080;">Position Value</th>
+            <th style="width:120px;background:#1e4080;">Model / Pattern</th>
+            <th style="width:120px;">Notes</th>
+            <th style="width:36px;"></th>
+          </tr>
+        </thead>
+        <tbody id="parts-tbody"></tbody>
+      </table>
+    </div>
+    <div class="flex-row mt-2">
+      <span class="input-hint">Dark header columns = computed outputs. All monetary values in selected currency.</span>
+      <div class="spacer"></div>
+      <strong style="font-size:13px;">Total SS Value: <span id="total-ss" style="color:var(--ge-blue);">$0</span> &nbsp;|&nbsp; Total ROP Value: <span id="total-rop" style="color:var(--ge-blue);">$0</span></strong>
+    </div>
+  </div>
+
+  <!-- HELP TAB -->
+  <div id="tab-help" class="tab-content">
+    <div class="guide-hero">
+      <h2>Start Here — Build a Defensible Inventory Policy</h2>
+      <p>This workbook separates calculation from approval. It chooses a model only when the inputs support it, exposes assumptions, and prevents invalid rows from quietly entering portfolio totals.</p>
+      <div class="status-line"><span class="status-chip">1. Establish policy</span><span class="status-chip">2. Load parts</span><span class="status-chip">3. Resolve alerts</span><span class="status-chip">4. Export the record</span></div>
+      <div class="guide-actions"><button class="btn btn-success" onclick="loadSampleData()">Load Generic Example</button><button class="btn btn-danger" onclick="clearWorkbook()">Clear Workbook</button></div>
+    </div>
+    <div class="guide-grid">
+      <div class="guide-step"><h3>1 — Setup</h3><p>Record the project, supplier, owner, revision, and assumptions. These fields travel with the JSON record.</p></div>
+      <div class="guide-step"><h3>2 — Policy Settings</h3><p>Select continuous or periodic review, CSL or fill rate, and the default variability assumption. Fill rate requires order quantity.</p></div>
+      <div class="guide-step"><h3>3 — Parts &amp; Calculations</h3><p>Enter demand, variability, lead time, and cost. Review every yellow assumption and red blocking error before using totals.</p></div>
+    </div>
+    <div class="card pur">
+      <div class="card-title">Formulas &amp; Calculation Logic</div>
+      <table class="help-table">
+        <tr><th>Variable</th><th>Formula</th><th>Notes</th></tr>
+        <tr><td>D (daily demand)</td><td><span class="formula">D_annual × BOM_qty / 365</span></td><td>Converts annual demand to daily rate</td></tr>
+        <tr><td>σD (daily)</td><td><span class="formula">σD_annual × BOM_qty / √365</span></td><td>Variance scales with time; blank annual σ uses annual demand × default CV</td></tr>
+        <tr><td>L (days)</td><td><span class="formula">Lead_time_weeks × 7</span></td><td>Lead time in consistent day units</td></tr>
+        <tr><td>σL (days)</td><td><span class="formula">σL_weeks × 7 (if entered), else 0</span></td><td>Supplier delivery variability in days</td></tr>
+        <tr><td>Protection interval T</td><td><span class="formula">L [continuous] or L + R [periodic]</span></td><td>R is the review period in days</td></tr>
+        <tr><td>μT</td><td><span class="formula">D × T</span></td><td>Expected demand across the full protection interval</td></tr>
+        <tr><td>σT</td><td><span class="formula">√(σD² × T + D² × σL²)</span></td><td>Combined demand and lead-time uncertainty</td></tr>
+        <tr><td>z (service factor)</td><td><span class="formula">NORMSINV(SL)</span></td><td>Cycle Service Level (CSL)</td></tr>
+        <tr><td>Normal-model safety stock</td><td><span class="formula">max(0, z × σT)</span></td><td>For fill rate, z is solved from the normal loss function and order quantity</td></tr>
+        <tr><td>Trigger / target</td><td><span class="formula">μT + SS</span></td><td>ROP for continuous review; order-up-to target for periodic review</td></tr>
+        <tr><td>Poisson slow mover</td><td><span class="formula">QuantilePoisson(CSL, μT)</span></td><td>Discrete CSL model; shown with a lead-time-variability warning when σL &gt; 0</td></tr>
+      </table>
+    </div>
+    <div class="card ylw">
+      <div class="card-title">Demand Pattern Screening</div>
+      <table class="help-table">
+        <tr><th>Pattern</th><th>Criteria</th><th>Recommendation</th></tr>
+        <tr><td><span class="flag-badge flag-normal">Normal</span></td><td>Demand above slow threshold and annual CV below threshold</td><td>Normal approximation is used</td></tr>
+        <tr><td><span class="flag-badge flag-slow">Slow Mover</span></td><td>Effective annual demand ≤ slow threshold</td><td>Poisson CSL or manual review, according to the global setting</td></tr>
+        <tr><td><span class="flag-badge flag-intermittent">Intermittent</span></td><td>Annual CV ≥ threshold</td><td>Output is a screening estimate; validate with transaction history or an empirical model</td></tr>
+        <tr><td><span class="flag-badge flag-error">⚠ Error</span></td><td>Missing or invalid inputs</td><td>Resolve input errors before relying on outputs</td></tr>
+      </table>
+    </div>
+    <div class="card red">
+      <div class="card-title">Known Limits &amp; Approval Checks</div>
+      <div class="alert alert-warn">Annual demand and annual σ must be on the same basis before BOM quantity is applied. Do not mix project demand, component demand, and shipment history.</div>
+      <div class="alert alert-warn">Blank σD uses an assumption; blank σL assumes perfectly stable lead time. Both remain visible as review warnings.</div>
+      <div class="alert alert-warn">CV alone cannot distinguish intermittent from lumpy demand. Use transaction history, non-zero demand frequency, and empirical back-testing for high-value decisions.</div>
+      <div class="alert alert-info">Policy Position Value is trigger/target × unit cost. It is an inventory-position proxy, not average on-hand working capital.</div>
+      <div class="alert alert-info">A method override requires a note. The workbook blocks an undocumented override from totals.</div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <h3>Import JSON</h3>
+    <p style="font-size:13px;color:var(--ge-muted);margin-bottom:10px;">Choose a workbook JSON file or paste its contents below. A valid import replaces the current session.</p>
+    <input type="file" id="import-file" accept="application/json,.json" onchange="readImportFile(this.files[0])" style="width:100%;margin-bottom:10px;">
+    <textarea class="json-preview" id="import-json-text" placeholder='Paste JSON here...'></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" onclick="closeImportModal()">Cancel</button>
+      <button class="btn btn-success btn-sm" onclick="doImport()">Import & Apply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+//  STATE
+// =============================================
+let parts = [];
+let nextId = 1;
+
+const defaultPart = () => ({
+  id: nextId++,
+  partNumber: '',
+  description: '',
+  vendor: '',
+  uom: 'ea',
+  unitCost: '',
+  bomQty: 1,
+  orderQty: '',
+  demandYr: '',
+  sigmaDYr: '',
+  leadTimeWks: '',
+  sigmaLWks: '',
+  serviceLevel: '',
+  reviewPeriodOverride: '',
+  methodOverride: 'auto',
+  notes: '',
+  // computed
+  D: null, sigmaD: null, L: null, sigmaL: null,
+  z: null, muLT: null, sigmaLT: null, SS: null, ROP: null,
+  ssCost: null, ropCost: null, pattern: 'Normal', model: 'Normal',
+  confidence: 'Review', warnings: [], errors: []
+});
+
+// =============================================
+//  NORMAL INVERSE (Rational Approximation)
+// =============================================
+function normInv(p) {
+  if (p <= 0 || p >= 1) return null;
+  const a = [0, -3.969683028665376e+01, 2.209460984245205e+02,
+    -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [0, -5.447609879822406e+01, 1.615858368580409e+02,
+    -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [0, -7.784894002430293e-03, -3.223964580411365e-01,
+    -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [0, 7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pLow = 0.02425, pHigh = 1 - pLow;
+  let q, r, x;
+  if (p < pLow) {
+    q = Math.sqrt(-2 * Math.log(p));
+    x = (((((c[1]*q+c[2])*q+c[3])*q+c[4])*q+c[5])*q+c[6]) /
+        ((((d[1]*q+d[2])*q+d[3])*q+d[4])*q+1);
+  } else if (p <= pHigh) {
+    q = p - 0.5; r = q*q;
+    x = (((((a[1]*r+a[2])*r+a[3])*r+a[4])*r+a[5])*r+a[6])*q /
+        (((((b[1]*r+b[2])*r+b[3])*r+b[4])*r+b[5])*r+1);
+  } else {
+    q = Math.sqrt(-2 * Math.log(1 - p));
+    x = -(((((c[1]*q+c[2])*q+c[3])*q+c[4])*q+c[5])*q+c[6]) /
+         ((((d[1]*q+d[2])*q+d[3])*q+d[4])*q+1);
+  }
+  return x;
+}
+
+function normCdf(x) {
+  const t = 1 / (1 + 0.2316419 * Math.abs(x));
+  const d = 0.3989422804014327 * Math.exp(-0.5 * x * x);
+  const prob = 1 - d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+  return x >= 0 ? prob : 1 - prob;
+}
+function normalLoss(z) {
+  const pdf = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
+  return pdf - z * (1 - normCdf(z));
+}
+function solveFillRateZ(beta, orderQty, sigma) {
+  if (!(beta > 0 && beta < 1) || !(orderQty > 0) || !(sigma > 0)) return null;
+  const target = (1 - beta) * orderQty / sigma;
+  if (target >= normalLoss(0)) return 0;
+  let lo = 0, hi = 8;
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2;
+    if (normalLoss(mid) > target) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+function poissonQuantile(prob, lambda) {
+  if (!(prob > 0 && prob < 1) || !(lambda >= 0)) return null;
+  if (lambda === 0) return 0;
+  if (lambda > 700) return Math.max(0, Math.ceil(lambda + normInv(prob) * Math.sqrt(lambda)));
+  let k = 0, term = Math.exp(-lambda), cdf = term;
+  while (cdf < prob && k < 100000) {
+    k += 1;
+    term *= lambda / k;
+    cdf += term;
+  }
+  return k;
+}
+
+// =============================================
+//  SETTINGS GETTERS
+// =============================================
+function getSettings() {
+  const n = (id, fallback) => {
+    const v = Number(document.getElementById(id).value);
+    return Number.isFinite(v) ? v : fallback;
+  };
+  return {
+    sl: n('g-sl', 0.95),
+    round: parseInt(document.getElementById('g-round').value),
+    review: document.getElementById('g-review').value,
+    reviewPeriod: n('g-review-period', 7),
+    slType: document.getElementById('g-sl-type').value,
+    currency: document.getElementById('g-currency').value || '$',
+    slowThresh: n('g-slow-thresh', 5),
+    cvThresh: n('g-cv-thresh', 0.5),
+    sigmaPct: n('g-sigma-pct', 20) / 100,
+    slowModel: document.getElementById('g-slow-model').value,
+    autosave: document.getElementById('g-autosave').value === '1',
+  };
+}
+
+function getSupplierInfo() {
+  return {
+    project: document.getElementById('sup-project').value,
+    facility: document.getElementById('sup-facility').value,
+    preparedBy: document.getElementById('sup-preparedby').value,
+    date: document.getElementById('sup-date').value,
+    revision: document.getElementById('sup-revision').value,
+    period: document.getElementById('sup-period').value,
+    supplierName: document.getElementById('sup-name').value,
+    supplierContact: document.getElementById('sup-contact').value,
+    supplierPhone: document.getElementById('sup-phone').value,
+    supplierAddress: document.getElementById('sup-address').value,
+    supplierCity: document.getElementById('sup-city').value,
+    contract: document.getElementById('sup-contract').value,
+    notes: document.getElementById('sup-notes').value,
+  };
+}
+
+function setSupplierInfo(info) {
+  if (!info) return;
+  const fields = ['project','facility','preparedBy','date','revision','period',
+    'supplierName','supplierContact','supplierPhone','supplierAddress','supplierCity','contract','notes'];
+  const ids = ['sup-project','sup-facility','sup-preparedby','sup-date','sup-revision','sup-period',
+    'sup-name','sup-contact','sup-phone','sup-address','sup-city','sup-contract','sup-notes'];
+  const keys = ['project','facility','preparedBy','date','revision','period',
+    'supplierName','supplierContact','supplierPhone','supplierAddress','supplierCity','contract','notes'];
+  keys.forEach((k,i) => {
+    if (info[k] !== undefined) document.getElementById(ids[i]).value = info[k];
+  });
+}
+
+// =============================================
+//  CALCULATE SINGLE PART
+// =============================================
+function calcPart(p, settings) {
+  const s = settings, errors = [], warnings = [];
+  const demand = Number(p.demandYr), bomQty = Number(p.bomQty), unitCost = p.unitCost === '' ? null : Number(p.unitCost);
+  const orderQty = p.orderQty === '' ? null : Number(p.orderQty), ltWks = Number(p.leadTimeWks);
+  const partSL = p.serviceLevel === '' ? null : Number(p.serviceLevel), sl = partSL === null ? s.sl : partSL;
+  const sigmaDYrInput = p.sigmaDYr === '' ? null : Number(p.sigmaDYr);
+  const sigmaLWksInput = p.sigmaLWks === '' ? null : Number(p.sigmaLWks);
+  const reviewOverride = p.reviewPeriodOverride === '' ? null : Number(p.reviewPeriodOverride);
+  const reviewPeriod = reviewOverride === null ? s.reviewPeriod : reviewOverride;
+
+  if (!Number.isFinite(demand) || demand <= 0) errors.push('Demand must be > 0');
+  if (!Number.isFinite(bomQty) || bomQty <= 0) errors.push('BOM quantity must be > 0');
+  if (unitCost !== null && (!Number.isFinite(unitCost) || unitCost < 0)) errors.push('Unit cost must be ≥ 0');
+  if (!Number.isFinite(ltWks) || ltWks <= 0) errors.push('Lead time must be > 0');
+  if (!Number.isFinite(sl) || sl < 0.5 || sl >= 1) errors.push('Service target must be 0.5–<1');
+  if (!Number.isFinite(s.slowThresh) || s.slowThresh < 0) errors.push('Slow threshold must be ≥ 0');
+  if (!Number.isFinite(s.cvThresh) || s.cvThresh <= 0) errors.push('CV threshold must be > 0');
+  if (!Number.isFinite(s.sigmaPct) || s.sigmaPct < 0 || s.sigmaPct > 2) errors.push('Default annual CV must be 0–200%');
+  if (sigmaDYrInput !== null && (!Number.isFinite(sigmaDYrInput) || sigmaDYrInput < 0)) errors.push('Demand σ must be ≥ 0');
+  if (sigmaLWksInput !== null && (!Number.isFinite(sigmaLWksInput) || sigmaLWksInput < 0)) errors.push('Lead-time σ must be ≥ 0');
+  if (s.review === 'periodic' && (!Number.isFinite(reviewPeriod) || reviewPeriod <= 0)) errors.push('Review period must be > 0');
+  if (s.slType === 'fill' && s.review !== 'continuous') errors.push('Fill rate requires continuous review');
+  if (s.slType === 'fill' && (!(orderQty > 0) || !Number.isFinite(orderQty))) errors.push('Order quantity required for fill rate');
+  if (p.methodOverride !== 'auto' && !String(p.notes || '').trim()) errors.push('Document method override in Notes');
+
+  const clear = () => {
+    p.pattern = 'Error'; p.model = 'Blocked'; p.confidence = 'Blocked'; p.errors = errors; p.warnings = warnings;
+    p.D = p.sigmaD = p.L = p.sigmaL = p.z = p.muLT = p.sigmaLT = p.SS = p.ROP = p.ssCost = p.ropCost = null;
+    return p;
+  };
+  if (errors.length) return clear();
+
+  const annualDemand = demand * bomQty;
+  const D = annualDemand / 365;
+  const L = ltWks * 7;
+  const sigmaAnnual = sigmaDYrInput === null ? annualDemand * s.sigmaPct : sigmaDYrInput * bomQty;
+  if (sigmaDYrInput === null) warnings.push('Demand σ assumed from default annual CV');
+  const sigmaD = sigmaAnnual / Math.sqrt(365);
+  const sigmaL = sigmaLWksInput === null ? 0 : sigmaLWksInput * 7;
+  if (sigmaLWksInput === null) warnings.push('Lead-time σ assumed to be zero');
+  const protectionDays = L + (s.review === 'periodic' ? reviewPeriod : 0);
+  const muProtection = D * protectionDays;
+  const sigmaProtection = Math.sqrt(sigmaD * sigmaD * protectionDays + D * D * sigmaL * sigmaL);
+  const cv = annualDemand > 0 ? sigmaAnnual / annualDemand : 0;
+  let pattern = annualDemand <= s.slowThresh ? 'Slow Mover' : (cv >= s.cvThresh ? 'Intermittent' : 'Normal');
+
+  let model = 'Normal', method = p.methodOverride || 'auto';
+  if (method === 'auto' && pattern === 'Slow Mover') model = s.slowModel === 'poisson' && s.slType === 'cycle' ? 'Poisson' : 'Screen Only';
+  else if (method === 'normal') model = 'Normal';
+  else if (method === 'poisson') model = 'Poisson';
+  else if (method === 'screen') model = 'Screen Only';
+  if (model === 'Poisson') {
+    const assumedIdx = warnings.indexOf('Demand σ assumed from default annual CV');
+    if (assumedIdx >= 0) warnings.splice(assumedIdx, 1);
+  }
+  if (model === 'Poisson' && s.slType !== 'cycle') errors.push('Poisson model supports CSL only');
+  if (model === 'Screen Only') errors.push('Manual model review required');
+  if (errors.length) return clear();
+
+  let z = s.slType === 'cycle' ? normInv(sl) : (sigmaProtection === 0 ? 0 : solveFillRateZ(sl, orderQty, sigmaProtection));
+  if (z === null || !Number.isFinite(z)) { errors.push('Could not solve service factor'); return clear(); }
+  let SS, ROP;
+  if (model === 'Poisson') {
+    ROP = poissonQuantile(sl, muProtection);
+    SS = Math.max(0, ROP - muProtection);
+    z = sigmaProtection > 0 ? SS / sigmaProtection : 0;
+    if (sigmaL > 0) warnings.push('Poisson result does not fully model lead-time variability');
+  } else {
+    SS = Math.max(0, z * sigmaProtection);
+    ROP = muProtection + SS;
+    if (pattern === 'Intermittent') warnings.push('Normal result is a screening estimate for variable demand');
+  }
+  if (s.round) { SS = Math.ceil(SS); ROP = Math.ceil(ROP); }
+  const ssCost = unitCost === null ? null : SS * unitCost;
+  const ropCost = unitCost === null ? null : ROP * unitCost;
+  if (unitCost === null) warnings.push('Unit cost missing; value outputs excluded');
+  const confidence = warnings.length ? 'Review' : 'Ready';
+  return Object.assign(p, {
+    D, sigmaD, L, sigmaL, z, muLT: muProtection, sigmaLT: sigmaProtection, protectionDays,
+    SS, ROP, ssCost, ropCost, pattern, model, confidence, errors: [], warnings,
+    sl_used: sl, cv, sigmaAnnualUsed: sigmaAnnual
+  });
+}
+
+// =============================================
+//  RECALCULATE ALL
+// =============================================
+function recalcAll() {
+  const settings = getSettings();
+  parts.forEach(p => calcPart(p, settings));
+  renderTable();
+  updateDashboard();
+  scheduleSave();
+}
+
+// =============================================
+//  FORMAT HELPERS
+// =============================================
+function fmt(n, dec=2) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return n.toFixed(dec);
+}
+function fmtCurrency(n) {
+  const s = getSettings();
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return s.currency + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+function patternBadge(pat) {
+  const map = { 'Normal':'flag-normal', 'Slow Mover':'flag-slow', 'Intermittent':'flag-intermittent', 'Error':'flag-error' };
+  return `<span class="flag-badge ${map[pat]||'flag-normal'}">${pat}</span>`;
+}
+function modelBadge(p) {
+  const cls = p.confidence === 'Blocked' ? 'flag-error' : (p.confidence === 'Ready' ? 'flag-normal' : 'flag-slow');
+  return `<span class="flag-badge ${cls}">${esc(p.model || '—')}</span><br><span style="font-size:10px;color:var(--ge-muted);">${esc(p.pattern || '')}</span>`;
+}
+
+// =============================================
+//  RENDER TABLE
+// =============================================
+function renderTable() {
+  const tbody = document.getElementById('parts-tbody');
+  tbody.innerHTML = '';
+  parts.forEach((p, idx) => {
+    const rowClass = p.pattern === 'Error' ? 'error-row' : (p.pattern !== 'Normal' ? 'warning-row' : '');
+    const row = document.createElement('tr');
+    row.className = rowClass;
+    row.innerHTML = `
+      <td class="text-center">${idx+1}</td>
+      <td><input type="text" value="${esc(p.partNumber)}" onchange="updateField(${p.id},'partNumber',this.value)" placeholder="Part #"></td>
+      <td><input type="text" value="${esc(p.description)}" onchange="updateField(${p.id},'description',this.value)" placeholder="Description"></td>
+      <td><input type="text" value="${esc(p.vendor)}" onchange="updateField(${p.id},'vendor',this.value)" placeholder="Vendor"></td>
+      <td><input type="text" value="${esc(p.uom)}" onchange="updateField(${p.id},'uom',this.value)" style="min-width:45px;"></td>
+      <td><input type="number" value="${p.unitCost}" onchange="updateField(${p.id},'unitCost',this.value)" placeholder="0.00" min="0" step="0.01"></td>
+      <td><input type="number" value="${p.bomQty}" onchange="updateField(${p.id},'bomQty',this.value)" min="1" step="1"></td>
+      <td><input type="number" value="${p.orderQty}" onchange="updateField(${p.id},'orderQty',this.value)" placeholder="fill rate" min="0.01" step="0.01" data-tooltip="Required only when Service Level Metric is Fill Rate."></td>
+      <td><input type="number" value="${p.demandYr}" onchange="updateField(${p.id},'demandYr',this.value)" placeholder="units/yr" min="0" step="0.1"></td>
+      <td><input type="number" value="${p.sigmaDYr}" onchange="updateField(${p.id},'sigmaDYr',this.value)" placeholder="auto" min="0" step="0.01" data-tooltip="Leave blank to use global default %. Enter actual σ from history."></td>
+      <td><input type="number" value="${p.leadTimeWks}" onchange="updateField(${p.id},'leadTimeWks',this.value)" placeholder="weeks" min="0" step="0.5"></td>
+      <td><input type="number" value="${p.sigmaLWks}" onchange="updateField(${p.id},'sigmaLWks',this.value)" placeholder="0" min="0" step="0.1" data-tooltip="Lead time std dev in weeks. Leave blank = 0 (no LT variability)."></td>
+      <td><input type="number" value="${p.serviceLevel}" onchange="updateField(${p.id},'serviceLevel',this.value)" placeholder="default" min="0.5" max="0.9999" step="0.001"></td>
+      <td><input type="number" value="${p.reviewPeriodOverride}" onchange="updateField(${p.id},'reviewPeriodOverride',this.value)" placeholder="global" min="1" step="1" data-tooltip="Override global review period for this part (days). Periodic review only."></td>
+      <td><select onchange="updateField(${p.id},'methodOverride',this.value)" data-tooltip="Overrides require a reason in Notes.">
+        <option value="auto" ${p.methodOverride==='auto'?'selected':''}>Auto</option>
+        <option value="normal" ${p.methodOverride==='normal'?'selected':''}>Normal</option>
+        <option value="poisson" ${p.methodOverride==='poisson'?'selected':''}>Poisson</option>
+        <option value="screen" ${p.methodOverride==='screen'?'selected':''}>Screen only</option>
+      </select></td>
+      <td class="computed">${fmt(p.D,4)}</td>
+      <td class="computed">${fmt(p.sigmaD,4)}</td>
+      <td class="computed">${fmt(p.L,1)}</td>
+      <td class="computed">${fmt(p.sigmaL,1)}</td>
+      <td class="computed">${fmt(p.z,3)}</td>
+      <td class="computed">${fmt(p.muLT,2)}</td>
+      <td class="computed">${fmt(p.sigmaLT,2)}</td>
+      <td class="computed highlight">${p.SS !== null ? fmt(p.SS,1) : '—'}</td>
+      <td class="computed highlight">${p.ROP !== null ? fmt(p.ROP,1) : '—'}</td>
+      <td class="computed ${p.ssCost>50000?'warn':''}">${fmtCurrency(p.ssCost)}</td>
+      <td class="computed">${fmtCurrency(p.ropCost)}</td>
+      <td class="text-center">${modelBadge(p)}${p.errors&&p.errors.length?`<br><span style="font-size:10px;color:var(--ge-red);">${p.errors.map(esc).join(', ')}</span>`:''}${p.warnings&&p.warnings.length?`<br><span style="font-size:10px;color:#975a16;">${p.warnings.map(esc).join(', ')}</span>`:''}</td>
+      <td><input type="text" value="${esc(p.notes)}" onchange="updateField(${p.id},'notes',this.value)" placeholder="Notes..."></td>
+      <td class="text-center"><button class="btn-icon" onclick="removeRow(${p.id})" title="Delete row">✕</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+  // Update totals
+  const totalSS = parts.reduce((a,p) => a + (p.ssCost||0), 0);
+  const totalROP = parts.reduce((a,p) => a + (p.ropCost||0), 0);
+  const s = getSettings();
+  document.getElementById('total-ss').textContent = fmtCurrency(totalSS);
+  document.getElementById('total-rop').textContent = fmtCurrency(totalROP);
+}
+
+function esc(v) {
+  if (v === null || v === undefined) return '';
+  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function updateField(id, field, value) {
+  const p = parts.find(x => x.id === id);
+  if (!p) return;
+  p[field] = value;
+  const settings = getSettings();
+  calcPart(p, settings);
+  renderTable();
+  updateDashboard();
+  scheduleSave();
+}
+
+function addRow() {
+  const p = defaultPart();
+  parts.push(p);
+  renderTable();
+  updateDashboard();
+  showTab('tab-parts');
+  scheduleSave();
+  // scroll to bottom
+  setTimeout(() => {
+    const tw = document.querySelector('.table-wrapper');
+    if(tw) tw.scrollTop = tw.scrollHeight;
+  }, 50);
+}
+
+function removeRow(id) {
+  if (!confirm('Delete this part?')) return;
+  parts = parts.filter(p => p.id !== id);
+  renderTable();
+  updateDashboard();
+  scheduleSave();
+}
+
+// =============================================
+//  LOCAL AUTOSAVE
+// =============================================
+const LS_KEY = 'safety_stock_workbook_v3';
+let saveTimer = null;
+function rawParts() {
+  return parts.map(p => ({
+    partNumber:p.partNumber, description:p.description, vendor:p.vendor, uom:p.uom,
+    unitCost:p.unitCost, bomQty:p.bomQty, orderQty:p.orderQty, demandYr:p.demandYr,
+    sigmaDYr:p.sigmaDYr, leadTimeWks:p.leadTimeWks, sigmaLWks:p.sigmaLWks,
+    serviceLevel:p.serviceLevel, reviewPeriodOverride:p.reviewPeriodOverride,
+    methodOverride:p.methodOverride, notes:p.notes
+  }));
+}
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveLocal, 500);
+}
+function saveLocal() {
+  const s = getSettings();
+  if (!s.autosave) { localStorage.removeItem(LS_KEY); document.getElementById('save-meta').textContent = 'Auto-save off'; return; }
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({savedAt:Date.now(), supplierInfo:getSupplierInfo(), settings:{
+      defaultServiceLevel:s.sl, roundToWholeUnits:s.round, reviewPolicy:s.review,
+      reviewPeriodDays:s.reviewPeriod, serviceMetric:s.slType, currency:s.currency,
+      slowMoverThreshold:s.slowThresh, cvThreshold:s.cvThresh, defaultSigmaPct:s.sigmaPct*100,
+      slowMoverModel:s.slowModel, autosave:s.autosave
+    }, parts:rawParts()}));
+    document.getElementById('save-meta').textContent = 'Auto-saved ' + new Date().toLocaleTimeString();
+  } catch (e) { document.getElementById('save-meta').textContent = 'Auto-save failed — export JSON'; }
+}
+function restoreLocal() {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+    if (!data || validateImportData(data)) return false;
+    setSupplierInfo(data.supplierInfo || {});
+    const s = data.settings || {};
+    const map = [['g-sl','defaultServiceLevel'],['g-round','roundToWholeUnits'],['g-review','reviewPolicy'],['g-review-period','reviewPeriodDays'],['g-sl-type','serviceMetric'],['g-currency','currency'],['g-slow-thresh','slowMoverThreshold'],['g-cv-thresh','cvThreshold'],['g-sigma-pct','defaultSigmaPct'],['g-slow-model','slowMoverModel']];
+    map.forEach(([id,key]) => { if (s[key] !== undefined) document.getElementById(id).value = s[key]; });
+    document.getElementById('g-autosave').value = s.autosave === false ? '0' : '1';
+    nextId = 1;
+    parts = data.parts.map(src => Object.assign(defaultPart(), src));
+    recalcAll();
+    document.getElementById('save-meta').textContent = 'Restored ' + new Date(data.savedAt || Date.now()).toLocaleString();
+    return true;
+  } catch (e) { return false; }
+}
+
+// =============================================
+//  DASHBOARD UPDATE
+// =============================================
+function updateDashboard() {
+  const total = parts.length;
+  const totalSS = parts.reduce((a,p) => a + (p.ssCost||0), 0);
+  const totalROP = parts.reduce((a,p) => a + (p.ropCost||0), 0);
+  const slow = parts.filter(p => p.confidence === 'Review').length;
+  const warnings = parts.filter(p => p.confidence === 'Blocked').length;
+
+  document.getElementById('kpi-parts').textContent = total;
+  document.getElementById('kpi-ss-cost').textContent = fmtCurrency(totalSS);
+  document.getElementById('kpi-rop-cost').textContent = fmtCurrency(totalROP);
+  document.getElementById('kpi-slow').textContent = slow;
+  document.getElementById('kpi-warnings').textContent = warnings;
+
+  // Alerts
+  const alertPanel = document.getElementById('alert-panel');
+  const alerts = [];
+  if (total === 0) alerts.push({type:'info', msg:'Add parts in the <strong>Parts &amp; Calculations</strong> tab to populate the dashboard.'});
+  const errorParts = parts.filter(p => p.confidence === 'Blocked');
+  if (errorParts.length) alerts.push({type:'error', msg:`<strong>${errorParts.length} part(s)</strong> are blocked and excluded from totals: ${errorParts.map(p=>esc(p.partNumber||'(unnamed)')).join(', ')}`});
+  const slowParts = parts.filter(p => p.pattern === 'Slow Mover');
+  if (slowParts.length) alerts.push({type:'warn', msg:`<strong>${slowParts.length} slow-mover(s)</strong> detected. Review the selected Poisson or manual-screening method.`});
+  const intermittent = parts.filter(p => p.pattern === 'Intermittent');
+  if (intermittent.length) alerts.push({type:'warn', msg:`<strong>${intermittent.length} variable-demand part(s)</strong> flagged. Treat Normal outputs as screening estimates until history is back-tested.`});
+  const noCost = parts.filter(p => p.demandYr && !p.unitCost);
+  if (noCost.length) alerts.push({type:'info', msg:`<strong>${noCost.length} part(s)</strong> missing unit cost — quantities remain valid, but value outputs are excluded.`});
+  const assumedSigma = parts.filter(p => p.demandYr && (p.sigmaDYr === '' || p.sigmaDYr === null || isNaN(parseFloat(p.sigmaDYr))));
+  if (assumedSigma.length) alerts.push({type:'warn', msg:`<strong>${assumedSigma.length} part(s)</strong> use assumed annual demand σ. Replace with historical variability before approval.`});
+
+  alertPanel.innerHTML = alerts.length ? alerts.map(a =>
+    `<div class="alert alert-${a.type}">${a.msg}</div>`
+  ).join('') : '<div class="alert alert-good">No issues detected. All active rows are calculation-ready.</div>';
+
+  // Pattern summary
+  const patternCounts = { Normal:0, 'Slow Mover':0, Intermittent:0, Error:0 };
+  parts.forEach(p => { if(patternCounts[p.pattern]!==undefined) patternCounts[p.pattern]++; });
+  const patDiv = document.getElementById('pattern-summary');
+  if (total === 0) { patDiv.innerHTML = '<span style="color:var(--ge-muted);">No data</span>'; }
+  else {
+    patDiv.innerHTML = Object.entries(patternCounts).map(([k,v]) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #edf2f7;">
+        <span>${patternBadge(k)}</span>
+        <strong>${v}</strong>
+        <div style="flex:1;margin:0 12px;background:#edf2f7;border-radius:4px;height:8px;">
+          <div style="background:var(--ge-blue);width:${total?Math.round(v/total*100):0}%;height:8px;border-radius:4px;"></div>
+        </div>
+        <span style="font-size:11px;color:var(--ge-muted);">${total?Math.round(v/total*100):0}%</span>
+      </div>
+    `).join('');
+  }
+
+  // Top 5 by SS value
+  const top5 = [...parts].filter(p=>p.ssCost).sort((a,b)=>(b.ssCost||0)-(a.ssCost||0)).slice(0,5);
+  const t5div = document.getElementById('top5-table');
+  if (!top5.length) { t5div.innerHTML = '<span style="color:var(--ge-muted);">No data</span>'; }
+  else {
+    t5div.innerHTML = `<table style="width:100%;font-size:12px;border-collapse:collapse;">
+      <tr style="background:var(--ge-blue);color:#fff;"><th style="padding:7px 8px;text-align:left;">Part</th><th style="padding:7px 8px;text-align:left;">Description</th><th style="padding:7px 8px;text-align:right;">SS Value</th></tr>
+      ${top5.map(p=>`<tr style="border-bottom:1px solid #edf2f7;"><td style="padding:7px 8px;">${esc(p.partNumber)||'—'}</td><td style="padding:7px 8px;color:var(--ge-muted);">${esc(p.description)||'—'}</td><td style="padding:7px 8px;text-align:right;font-weight:700;color:var(--ge-blue);">${fmtCurrency(p.ssCost)}</td></tr>`).join('')}
+    </table>`;
+  }
+}
+
+// =============================================
+//  JSON EXPORT
+// =============================================
+function exportJSON() {
+  const settings = getSettings();
+  const supplierInfo = getSupplierInfo();
+  const exportData = {
+    meta: {
+      tool: 'Safety Stock & ROP Calculator',
+      version: '3.0',
+      exportedAt: new Date().toISOString(),
+      supplierInfo
+    },
+    settings: {
+      defaultServiceLevel: settings.sl,
+      roundToWholeUnits: settings.round,
+      reviewPolicy: settings.review,
+      reviewPeriodDays: settings.reviewPeriod,
+      serviceMetric: settings.slType,
+      currency: settings.currency,
+      slowMoverThreshold: settings.slowThresh,
+      cvThreshold: settings.cvThresh,
+      defaultSigmaPct: settings.sigmaPct * 100,
+      slowMoverModel: settings.slowModel,
+      autosave: settings.autosave,
+    },
+    parts: parts.map(p => ({
+      partNumber: p.partNumber,
+      description: p.description,
+      vendor: p.vendor,
+      uom: p.uom,
+      unitCost: p.unitCost,
+      bomQty: p.bomQty,
+      orderQty: p.orderQty,
+      demandYr: p.demandYr,
+      sigmaDYr: p.sigmaDYr,
+      leadTimeWks: p.leadTimeWks,
+      sigmaLWks: p.sigmaLWks,
+      serviceLevel: p.serviceLevel,
+      reviewPeriodOverride: p.reviewPeriodOverride,
+      methodOverride: p.methodOverride,
+      notes: p.notes,
+      // Include computed outputs for reference
+      computed: {
+        D_daily: p.D, sigmaD_daily: p.sigmaD, L_days: p.L, sigmaL_days: p.sigmaL,
+        z: p.z, muLT: p.muLT, sigmaLT: p.sigmaLT,
+        SS: p.SS, ROP: p.ROP, ssCost: p.ssCost, ropCost: p.ropCost,
+        pattern: p.pattern, model: p.model, confidence: p.confidence, cv: p.cv, sl_used: p.sl_used,
+        warnings: p.warnings, errors: p.errors, protectionDays: p.protectionDays
+      }
+    }))
+  };
+  const jsonStr = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([jsonStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const proj = getSupplierInfo().project || 'safetystock';
+  a.download = `${proj.replace(/[^a-z0-9]/gi,'_')}_safety_stock_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// =============================================
+//  JSON IMPORT
+// =============================================
+function openImportModal() {
+  document.getElementById('import-modal').classList.add('open');
+}
+function closeImportModal() {
+  document.getElementById('import-modal').classList.remove('open');
+  document.getElementById('import-json-text').value = '';
+  document.getElementById('import-file').value = '';
+}
+function readImportFile(file) {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('Import rejected: file is larger than 5 MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => { document.getElementById('import-json-text').value = String(e.target.result || ''); };
+  reader.onerror = () => alert('Could not read the selected file.');
+  reader.readAsText(file);
+}
+function validateImportData(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return 'Root value must be an object.';
+  if (!Array.isArray(data.parts)) return 'Missing parts array.';
+  if (data.parts.length > 5000) return 'Part count exceeds the 5,000-row limit.';
+  if (data.settings !== undefined && (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings))) return 'Settings must be an object.';
+  for (let i = 0; i < data.parts.length; i++) if (!data.parts[i] || typeof data.parts[i] !== 'object' || Array.isArray(data.parts[i])) return `Part ${i+1} is invalid.`;
+  return '';
+}
+function doImport() {
+  const text = document.getElementById('import-json-text').value.trim();
+  if (!text) { alert('Please paste JSON data.'); return; }
+  let data;
+  try { data = JSON.parse(text); } catch(e) { alert('Invalid JSON: ' + e.message); return; }
+  const importError = validateImportData(data);
+  if (importError) { alert('Invalid workbook: ' + importError); return; }
+  if (!confirm('Replace the current session with this imported workbook?')) return;
+
+  // Load settings
+  if (data.settings) {
+    const s = data.settings;
+    if (s.defaultServiceLevel !== undefined) document.getElementById('g-sl').value = s.defaultServiceLevel;
+    if (s.roundToWholeUnits !== undefined) document.getElementById('g-round').value = s.roundToWholeUnits;
+    if (s.reviewPolicy) document.getElementById('g-review').value = s.reviewPolicy;
+    if (s.reviewPeriodDays !== undefined) document.getElementById('g-review-period').value = s.reviewPeriodDays;
+    if (s.serviceMetric) document.getElementById('g-sl-type').value = s.serviceMetric;
+    if (s.currency) document.getElementById('g-currency').value = s.currency;
+    if (s.slowMoverThreshold !== undefined) document.getElementById('g-slow-thresh').value = s.slowMoverThreshold;
+    if (s.cvThreshold !== undefined) document.getElementById('g-cv-thresh').value = s.cvThreshold;
+    if (s.defaultSigmaPct !== undefined) document.getElementById('g-sigma-pct').value = s.defaultSigmaPct;
+    if (s.slowMoverModel) document.getElementById('g-slow-model').value = s.slowMoverModel;
+    if (s.autosave !== undefined) document.getElementById('g-autosave').value = s.autosave ? '1' : '0';
+  }
+
+  // Load supplier info
+  if (data.meta && data.meta.supplierInfo) {
+    setSupplierInfo(data.meta.supplierInfo);
+  }
+
+  // Load parts
+  if (data.parts && Array.isArray(data.parts)) {
+    nextId = 1;
+    const val = (v, fallback='') => v === undefined || v === null ? fallback : v;
+    parts = data.parts.map(p => {
+      const np = defaultPart();
+      Object.assign(np, {
+        partNumber: val(p.partNumber),
+        description: val(p.description),
+        vendor: val(p.vendor),
+        uom: val(p.uom, 'ea'),
+        unitCost: val(p.unitCost),
+        bomQty: val(p.bomQty, 1),
+        orderQty: val(p.orderQty),
+        demandYr: val(p.demandYr),
+        sigmaDYr: val(p.sigmaDYr),
+        leadTimeWks: val(p.leadTimeWks),
+        sigmaLWks: val(p.sigmaLWks),
+        serviceLevel: val(p.serviceLevel),
+        reviewPeriodOverride: val(p.reviewPeriodOverride),
+        methodOverride: ['auto','normal','poisson','screen'].includes(p.methodOverride) ? p.methodOverride : 'auto',
+        notes: val(p.notes),
+      });
+      return np;
+    });
+    recalcAll();
+  }
+  closeImportModal();
+  showTab('tab-parts');
+}
+
+// =============================================
+//  TABS
+// =============================================
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['tab-dashboard','tab-supplier','tab-settings','tab-parts','tab-help'].indexOf(id);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+}
+
+// =============================================
+//  INITIAL LOAD — sample data from original file
+// =============================================
+function loadSampleData() {
+  if (parts.length && !confirm('Replace the current parts list with the generic example?')) return;
+  const sampleParts = [
+    {partNumber:'DEMO-100',description:'Regular demand component',vendor:'Example Supplier',uom:'ea',unitCost:125,bomQty:1,orderQty:50,demandYr:520,sigmaDYr:104,leadTimeWks:4,sigmaLWks:0.5,serviceLevel:0.95,methodOverride:'auto',notes:''},
+    {partNumber:'DEMO-200',description:'Slow-moving service part',vendor:'Example Supplier',uom:'ea',unitCost:2400,bomQty:1,orderQty:1,demandYr:3,sigmaDYr:'',leadTimeWks:12,sigmaLWks:'',serviceLevel:0.99,methodOverride:'auto',notes:'Poisson-screening example'},
+    {partNumber:'DEMO-300',description:'High-variability component',vendor:'Alternate Supplier',uom:'ea',unitCost:480,bomQty:2,orderQty:25,demandYr:120,sigmaDYr:90,leadTimeWks:8,sigmaLWks:2,serviceLevel:0.98,methodOverride:'auto',notes:'Validate against transaction history'},
+  ];
+  nextId = 1;
+  parts = sampleParts.map(sp => {
+    const p = defaultPart();
+    return Object.assign(p, sp);
+  });
+  recalcAll();
+}
+
+function clearWorkbook() {
+  if (!confirm('Clear all parts, setup data, and browser-saved workbook data?')) return;
+  localStorage.removeItem(LS_KEY);
+  parts = []; nextId = 1;
+  document.querySelectorAll('#tab-supplier input,#tab-supplier textarea').forEach(el => el.value = '');
+  document.getElementById('sup-period').value = '1';
+  document.getElementById('sup-date').value = new Date().toISOString().slice(0,10);
+  renderTable(); updateDashboard();
+  document.getElementById('save-meta').textContent = 'Workbook cleared';
+}
+
+// Initial load: restore a prior browser session or start with one blank row.
+document.getElementById('sup-date').value = new Date().toISOString().slice(0,10);
+document.querySelectorAll('input,select,textarea').forEach(el => el.addEventListener('change', scheduleSave));
+if (!restoreLocal()) {
+  parts = [];
+  renderTable();
+  updateDashboard();
+}
+window.addEventListener('pagehide', saveLocal);
+</script>
+</body>
+</html>
