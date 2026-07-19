@@ -1,0 +1,39 @@
+.decision-exports {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+.export-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.export-error {
+  max-width: 460px;
+  color: var(--red);
+  font-size: 10px;
+  line-height: 1.35;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .decision-exports,
+  .export-buttons {
+    width: 100%;
+  }
+
+  .export-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .export-buttons button {
+    width: 100%;
+  }
+
+  .export-error {
+    text-align: left;
+  }
+}
