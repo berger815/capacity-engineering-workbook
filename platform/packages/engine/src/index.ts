@@ -7,6 +7,9 @@ import type {
   ResourceGroup,
   ResourcePeriodResult,
   RoutingRevision,
+  Scenario,
+  ScenarioAction,
+  ScenarioComparisonResult,
   WorkingCalendar,
 } from "@capacity/domain";
 
@@ -62,15 +65,57 @@ function datesInclusive(start: Date, end: Date): Date[] {
   return dates;
 }
 
+function availableMinutesForDate(calendar: WorkingCalendar, date: Date): number {
+  const key = iso(date);
+  const exception = calendar.exceptions.find(item => item.date === key);
+  if (exception) return exception.availableMinutes;
+  const weekday = date.getUTCDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  return calendar.weeklyMinutes[weekday] ?? 0;
+}
+
 function availableMinutes(calendar: WorkingCalendar, start: Date, end: Date): number {
-  const exceptions = new Map(calendar.exceptions.map(item => [item.date, item.availableMinutes]));
-  return datesInclusive(start, end).reduce((sum, date) => {
-    const key = iso(date);
-    const override = exceptions.get(key);
-    if (override !== undefined) return sum + override;
-    const weekday = date.getUTCDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6;
-    return sum + (calendar.weeklyMinutes[weekday] ?? 0);
-  }, 0);
+  return datesInclusive(start, end).reduce((sum, date) => sum + availableMinutesForDate(calendar, date), 0);
+}
+
+function isActive(date: string, effectiveFrom?: string, effectiveTo?: string): boolean {
+  return (!effectiveFrom || effectiveFrom <= date) && (!effectiveTo || effectiveTo >= date);
+}
+
+function resolveScenarioChain(model: CapacityModel, scenarioId: string): Scenario[] {
+  const scenarios = new Map(model.scenarios.map(item => [item.id, item]));
+  const target = scenarios.get(scenarioId);
+  if (!target) throw new Error(`Scenario not found: ${scenarioId}`);
+
+  const reversed: Scenario[] = [];
+  const visited = new Set<string>();
+  let cursor: Scenario | undefined = target;
+  while (cursor) {
+    if (visited.has(cursor.id)) throw new Error(`Scenario parent cycle detected at ${cursor.id}`);
+    visited.add(cursor.id);
+    reversed.push(cursor);
+    cursor = cursor.parentScenarioId ? scenarios.get(cursor.parentScenarioId) : undefined;
+    if (reversed.at(-1)?.parentScenarioId && !cursor) {
+      throw new Error(`Parent scenario not found: ${reversed.at(-1)?.parentScenarioId}`);
+    }
+  }
+  return reversed.reverse();
+}
+
+function demandForScenario(model: CapacityModel, scenarioId: string): { records: DemandRecord[]; sourceScenarioId: string } {
+  const chain = resolveScenarioChain(model, scenarioId);
+  for (const scenario of [...chain].reverse()) {
+    const records = model.demand.filter(item => item.scenarioId === scenario.id && item.quantity > 0);
+    if (records.length > 0) return { records, sourceScenarioId: scenario.id };
+  }
+  return { records: [], sourceScenarioId: scenarioId };
+}
+
+function actionsForScenario(model: CapacityModel, scenarioId: string): ScenarioAction[] {
+  const scenarioIds = new Set(resolveScenarioChain(model, scenarioId).map(item => item.id));
+  return (model.scenarioActions ?? [])
+    .filter(action => scenarioIds.has(action.scenarioId))
+    .filter(action => action.included && action.status !== "rejected")
+    .sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom) || a.id.localeCompare(b.id));
 }
 
 function revisionForDemand(revisions: RoutingRevision[], demand: DemandRecord): RoutingRevision | undefined {
@@ -110,29 +155,64 @@ function phaseAllocation(
   return totalDays === 0 ? 0 : overlapDays(range.start, range.end, period.start, period.end) / totalDays;
 }
 
-function capacityForPeriod(model: CapacityModel, group: ResourceGroup, start: Date, end: Date): number {
+function capacityForPeriod(
+  model: CapacityModel,
+  group: ResourceGroup,
+  start: Date,
+  end: Date,
+  actions: ScenarioAction[],
+): number {
   const calendar = model.calendars.find(item => item.id === group.calendarId);
   if (!calendar) return 0;
-  const availableHours = availableMinutes(calendar, start, end) / 60;
-  return model.resources
-    .filter(resource => resource.resourceGroupId === group.id)
-    .filter(resource => !resource.effectiveFrom || resource.effectiveFrom <= iso(end))
-    .filter(resource => !resource.effectiveTo || resource.effectiveTo >= iso(start))
-    .reduce((sum, resource) => {
+  const resources = model.resources.filter(resource => resource.resourceGroupId === group.id);
+
+  return datesInclusive(start, end).reduce((periodCapacity, date) => {
+    const dateKey = iso(date);
+    const availableHours = availableMinutesForDate(calendar, date) / 60;
+    if (availableHours === 0) return periodCapacity;
+
+    const baseCapacity = resources.reduce((resourceCapacity, resource) => {
+      if (!isActive(dateKey, resource.effectiveFrom, resource.effectiveTo)) return resourceCapacity;
+      const quantityDelta = actions
+        .filter(action => action.kind === "resourceQuantityDelta")
+        .filter(action => action.resourceId === resource.id)
+        .filter(action => isActive(dateKey, action.effectiveFrom, action.effectiveTo))
+        .reduce((sum, action) => sum + action.quantityDelta, 0);
       const effectiveRate = resource.ratePerAvailableHour * resource.availability * resource.performance * resource.quality;
-      return sum + resource.quantity * availableHours * effectiveRate;
+      return resourceCapacity + (resource.quantity + quantityDelta) * availableHours * effectiveRate;
     }, 0);
+
+    const multiplier = actions
+      .filter(action => action.kind === "resourceCapacityMultiplier")
+      .filter(action => action.resourceGroupId === group.id)
+      .filter(action => isActive(dateKey, action.effectiveFrom, action.effectiveTo))
+      .reduce((product, action) => product * action.multiplier, 1);
+
+    return periodCapacity + baseCapacity * multiplier;
+  }, 0);
+}
+
+function adjustedDemandQuantity(demand: DemandRecord, actions: ScenarioAction[]): number {
+  const multiplier = actions
+    .filter(action => action.kind === "demandMultiplier")
+    .filter(action => !action.productId || action.productId === demand.productId)
+    .filter(action => isActive(demand.shipDate, action.effectiveFrom, action.effectiveTo))
+    .reduce((product, action) => product * action.multiplier, 1);
+  return demand.quantity * multiplier;
 }
 
 function loadForPeriod(
   model: CapacityModel,
-  scenarioId: string,
+  demands: DemandRecord[],
   groupId: string,
   period: { start: Date; end: Date },
+  actions: ScenarioAction[],
   issues: ModelIssue[],
 ): number {
   let load = 0;
-  for (const demand of model.demand.filter(item => item.scenarioId === scenarioId && item.quantity > 0)) {
+  for (const demand of demands) {
+    const demandQuantity = adjustedDemandQuantity(demand, actions);
+    if (demandQuantity <= 0) continue;
     const revision = revisionForDemand(model.routingRevisions, demand);
     if (!revision) {
       issues.push({ severity: "error", code: "ROUTING_REVISION_MISSING", message: `No routing revision for demand ${demand.id}`, entityType: "demand", entityId: demand.id });
@@ -154,10 +234,10 @@ function loadForPeriod(
           continue;
         }
         if (value.state !== "value" || value.value === undefined) continue;
-        let requirementLoad = value.value * demand.quantity;
+        let requirementLoad = value.value * demandQuantity;
         if (requirement.setupRequirement?.state === "value" && requirement.setupRequirement.value !== undefined) {
-          const batchSize = requirement.batchSize ?? operation.maximumBatchSize ?? operation.minimumBatchSize ?? demand.quantity;
-          const batches = batchSize > 0 ? Math.ceil(demand.quantity / batchSize) : 1;
+          const batchSize = requirement.batchSize ?? operation.maximumBatchSize ?? operation.minimumBatchSize ?? demandQuantity;
+          const batches = batchSize > 0 ? Math.ceil(demandQuantity / batchSize) : 1;
           requirementLoad += requirement.setupRequirement.value * batches;
         }
         load += requirementLoad * allocation;
@@ -169,16 +249,15 @@ function loadForPeriod(
 
 export function calculateCapacity(model: CapacityModel, scenarioId: string): CalculationResult {
   const issues: ModelIssue[] = [];
-  if (!model.scenarios.some(item => item.id === scenarioId)) {
-    throw new Error(`Scenario not found: ${scenarioId}`);
-  }
+  const demandSelection = demandForScenario(model, scenarioId);
+  const actions = actionsForScenario(model, scenarioId);
   const periods = enumeratePeriods(model.horizonStart, model.horizonEnd, model.planningGranularity);
   const results: ResourcePeriodResult[] = [];
 
   for (const group of model.resourceGroups) {
     for (const period of periods) {
-      const capacity = capacityForPeriod(model, group, period.start, period.end);
-      const load = loadForPeriod(model, scenarioId, group.id, period, issues);
+      const capacity = capacityForPeriod(model, group, period.start, period.end, actions);
+      const load = loadForPeriod(model, demandSelection.records, group.id, period, actions, issues);
       const gap = capacity - load;
       results.push({
         scenarioId,
@@ -197,6 +276,10 @@ export function calculateCapacity(model: CapacityModel, scenarioId: string): Cal
     .filter(result => result.load > 0)
     .sort((a, b) => (b.utilization ?? -1) - (a.utilization ?? -1))[0] ?? null;
 
+  const appliedActionIds = actions
+    .filter(action => action.effectiveFrom <= model.horizonEnd && (!action.effectiveTo || action.effectiveTo >= model.horizonStart))
+    .map(action => action.id);
+
   return {
     modelId: model.modelId,
     scenarioId,
@@ -204,7 +287,65 @@ export function calculateCapacity(model: CapacityModel, scenarioId: string): Cal
     results,
     governingConstraint,
     issues,
+    demandSourceScenarioId: demandSelection.sourceScenarioId,
+    appliedActionIds,
   };
 }
 
-export const engineInternals = { enumeratePeriods, availableMinutes, phaseDates, phaseAllocation };
+function comparisonKey(row: ResourcePeriodResult): string {
+  return `${row.resourceGroupId}|${row.periodStart}`;
+}
+
+export function compareCapacityScenarios(
+  model: CapacityModel,
+  baselineScenarioId: string,
+  comparisonScenarioId: string,
+): ScenarioComparisonResult {
+  const baseline = calculateCapacity(model, baselineScenarioId);
+  const comparison = calculateCapacity(model, comparisonScenarioId);
+  const comparisonRows = new Map(comparison.results.map(row => [comparisonKey(row), row]));
+
+  const rows = baseline.results.map(baselineRow => {
+    const comparisonRow = comparisonRows.get(comparisonKey(baselineRow));
+    if (!comparisonRow) throw new Error(`Comparison row missing for ${comparisonKey(baselineRow)}`);
+    const utilizationDelta = baselineRow.utilization !== null && comparisonRow.utilization !== null
+      && Number.isFinite(baselineRow.utilization) && Number.isFinite(comparisonRow.utilization)
+      ? comparisonRow.utilization - baselineRow.utilization
+      : null;
+    return {
+      resourceGroupId: baselineRow.resourceGroupId,
+      periodStart: baselineRow.periodStart,
+      periodEnd: baselineRow.periodEnd,
+      baseline: baselineRow,
+      comparison: comparisonRow,
+      loadDelta: comparisonRow.load - baselineRow.load,
+      capacityDelta: comparisonRow.capacity - baselineRow.capacity,
+      gapDelta: comparisonRow.gap - baselineRow.gap,
+      utilizationDelta,
+    };
+  });
+
+  return {
+    modelId: model.modelId,
+    baselineScenarioId,
+    comparisonScenarioId,
+    generatedAt: new Date().toISOString(),
+    baseline,
+    comparison,
+    rows,
+    resolvedGapPeriods: rows.filter(row => row.baseline.gap < 0 && row.comparison.gap >= 0).length,
+    remainingGapPeriods: rows.filter(row => row.comparison.gap < 0).length,
+    worsenedGapPeriods: rows.filter(row => row.comparison.gap < row.baseline.gap).length,
+    appliedActionIds: comparison.appliedActionIds ?? [],
+  };
+}
+
+export const engineInternals = {
+  enumeratePeriods,
+  availableMinutes,
+  phaseDates,
+  phaseAllocation,
+  resolveScenarioChain,
+  demandForScenario,
+  actionsForScenario,
+};
