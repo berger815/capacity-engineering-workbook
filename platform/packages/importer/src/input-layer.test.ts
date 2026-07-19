@@ -87,7 +87,7 @@ describe("calendar import", () => {
     const result = importCalendarsCsv(csv, exceptions, baseModel, genericCalendarProfile.mapping, genericCalendarExceptionProfile.mapping);
     expect(result.issues).toEqual([]);
     expect(result.records[0]?.weeklyMinutes[1]).toBe(480);
-    expect(result.records[0]?.weeklyMinutes[0]).toBe(0);
+    expect(result.records[0]?.weeklyMinutes[0]).toBeUndefined();
     expect(result.records[0]?.exceptions[0]).toMatchObject({ date: "2026-12-25", availableMinutes: 0, reason: "Holiday" });
     expect(result.controlTotals).toMatchObject({ calendarCount: 1, exceptionCount: 1, earliestExceptionDate: "2026-12-25" });
   });
