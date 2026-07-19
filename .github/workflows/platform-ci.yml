@@ -80,23 +80,23 @@ jobs:
           psql --host 127.0.0.1 --username postgres --dbname capacity_assurance_test --set ON_ERROR_STOP=1 --command "SELECT to_regclass('public.scenario_actions') AS scenario_actions, to_regclass('public.calculation_run_actions') AS calculation_run_actions;"
       - name: Build
         run: pnpm build
-      - name: Capture typecheck
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Capture tests
         shell: bash
         run: |
           set +e
-          pnpm typecheck > typecheck.log 2>&1
+          pnpm test > test.log 2>&1
           status=$?
-          cat typecheck.log
-          echo "$status" > typecheck.status
+          cat test.log
+          echo "$status" > test.status
           exit 0
-      - name: Upload typecheck diagnostics
+      - name: Upload test diagnostics
         uses: actions/upload-artifact@v4
         with:
-          name: input-layer-typecheck
+          name: input-layer-tests
           path: |
-            platform/typecheck.log
-            platform/typecheck.status
-      - name: Fail on typecheck errors
-        run: test "$(cat typecheck.status)" = "0"
-      - name: Test
-        run: pnpm test
+            platform/test.log
+            platform/test.status
+      - name: Fail on test errors
+        run: test "$(cat test.status)" = "0"
