@@ -1,0 +1,141 @@
+.constraint-explorer {
+  display: grid;
+  gap: 18px;
+}
+
+.explain-button {
+  border: 1px solid #b8c9da;
+  border-radius: 7px;
+  padding: 6px 9px;
+  background: #edf5fb;
+  color: var(--blue);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.selected-row {
+  background: #edf6fc !important;
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.explanation-panel {
+  padding: 22px;
+  border: 1px solid #cddae7;
+  border-radius: 15px;
+  background: #f8fbfd;
+  box-shadow: 0 8px 24px rgba(13,29,52,.06);
+}
+
+.explanation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.explanation-heading h3 {
+  margin: 5px 0 0;
+  color: var(--navy);
+  font-size: 20px;
+}
+
+.reconciliation {
+  min-width: 150px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  text-align: right;
+}
+
+.reconciliation.reconciled {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.reconciliation.unreconciled {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.reconciliation span,
+.reconciliation strong {
+  display: block;
+}
+
+.reconciliation span {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .78;
+}
+
+.reconciliation strong {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.explanation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.share-list {
+  display: grid;
+  gap: 7px;
+}
+
+.share-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid #e4eaf0;
+}
+
+.share-list > div:last-child {
+  border-bottom: 0;
+}
+
+.share-list strong,
+.share-list small {
+  display: block;
+}
+
+.share-list strong {
+  font-size: 11px;
+  color: var(--navy);
+}
+
+.share-list small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.share-list > div > span {
+  flex: 0 0 auto;
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.contribution-table {
+  margin-top: 14px;
+}
+
+.table-note {
+  display: block;
+  padding: 10px 14px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+@media (max-width: 800px) {
+  .explanation-grid { grid-template-columns: 1fr; }
+  .explanation-heading { align-items: flex-start; flex-direction: column; }
+  .reconciliation { width: 100%; text-align: left; }
+}
