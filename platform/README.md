@@ -19,8 +19,8 @@ It is not an ERP, MRP, MES, finite scheduler, dispatching system, or accounting 
 - `packages/fixtures` — canonical synthetic regression and demonstration models.
 - `packages/importer` — dependency-free CSV parsing, reusable demand mappings, row validation, and control totals.
 - `apps/api` — runnable HTTP import, validation, and calculation service.
+- `apps/web` — guided Assessment Studio for scope, demand import, readiness, calculation, and decision review.
 - `database/migrations` — normalized PostgreSQL persistence contract.
-- `apps/web` — planned browser application.
 
 ## Modeling principles
 
@@ -34,6 +34,7 @@ It is not an ERP, MRP, MES, finite scheduler, dispatching system, or accounting 
 8. The calculation engine is independent of UI, persistence, and integrations.
 9. Published decisions must remain reproducible through source snapshots, mapping versions, scenario versions, engine versions, and input digests.
 10. Imports report control totals and rejected rows; bad data never silently becomes zero.
+11. The guided interface uses progressive disclosure: decision first, details on demand.
 
 ## Current vertical slice
 
@@ -53,8 +54,11 @@ The working slice includes:
 - ISO and U.S. date parsing, row-level errors, and reconciliation totals;
 - atomic scenario demand replacement with explicit partial-import opt-in;
 - runnable HTTP endpoints for health, fixture retrieval, validation, demand import preview/apply, and calculation;
+- guided browser workflow: Scope → Data → Readiness → Analysis → Decision;
+- executive decision summary and ranked constraint-period table;
+- responsive desktop, tablet, and phone layout;
 - normalized PostgreSQL migration for identity, tenancy, model entities, source lineage, mappings, calculations, results, and audit;
-- automated engine, fixture, importer, API, and HTTP integration tests.
+- automated engine, fixture, importer, API, HTTP integration, and web decision tests.
 
 ## Commands
 
@@ -65,10 +69,10 @@ pnpm install
 pnpm build
 pnpm typecheck
 pnpm test
-pnpm --filter @capacity/api start
+pnpm dev
 ```
 
-The API listens on `127.0.0.1:3000` by default. Override with `HOST` and `PORT`.
+`pnpm dev` starts the API on `127.0.0.1:3000` and the Assessment Studio on `127.0.0.1:4173`.
 
 ## API contract
 
@@ -91,13 +95,14 @@ Before this branch is ready to merge:
 - Missing and not-applicable inputs cannot silently become zero.
 - Demand import exposes accepted/rejected rows and control totals.
 - The API validates every import and calculation request.
+- The first guided workflow reaches a governing-constraint decision without direct API use.
 - The database migration is reviewed before deployment.
 - No changes are made to the legacy `index.html`.
 
 ## Next vertical slices
 
-1. Golden expected-result snapshots and deeper v6.86 reconciliation.
-2. Product, routing, resource, and calendar table import mappings.
-3. PostgreSQL repository implementation and migration CI.
-4. Asynchronous calculation/import jobs.
-5. First web workflow: import → validate → calculate → inspect constraint.
+1. Baseline-versus-recovery scenario comparison with governed action effects.
+2. Golden expected-result snapshots and deeper v6.86 reconciliation.
+3. Product, routing, resource, and calendar table import mappings.
+4. PostgreSQL repository implementation and migration CI.
+5. Executive decision report export and portable assessment package.
