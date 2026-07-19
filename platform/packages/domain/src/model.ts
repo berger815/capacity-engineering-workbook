@@ -140,6 +140,52 @@ export interface DemandRecord {
   sourceRecordId?: string;
 }
 
+export type ActionLogCategory = "data" | "assumption" | "risk" | "decision" | "followUp" | "general";
+
+export interface ActionLogEntry {
+  id: Id;
+  createdAt: string;
+  createdBy?: string;
+  category: ActionLogCategory;
+  note: string;
+  relatedEntityType?: string;
+  relatedEntityId?: Id;
+  owner?: string;
+  dueDate?: IsoDate;
+  resolvedAt?: string;
+}
+
+export type PlanningWipBasis = "estimated" | "reported" | "derived";
+
+export interface PlanningWipRecord {
+  id: Id;
+  scenarioId: Id;
+  productId: Id;
+  periodStart: IsoDate;
+  quantity: number;
+  basis: PlanningWipBasis;
+  sourceSystem?: string;
+  confidence?: "high" | "medium" | "low" | "unknown";
+  notes?: string;
+}
+
+export interface FootprintPlan {
+  id: Id;
+  departmentOrArea: string;
+  organizationNodeId?: Id;
+  calendarId?: Id;
+  productId?: Id;
+  productFamily?: string;
+  dwellWorkingDays: number;
+  spacePerUnit: number;
+  basis: "squareFeet" | "palletPositions" | "custom";
+  availableCapacity: number;
+  peakFactor: number;
+  source?: string;
+  confidence?: "high" | "medium" | "low" | "unknown";
+  notes?: string;
+}
+
 export interface Scenario {
   id: Id;
   name: string;
@@ -207,6 +253,9 @@ export interface CapacityModel {
   scenarios: Scenario[];
   demand: DemandRecord[];
   scenarioActions?: ScenarioAction[];
+  actionLog?: ActionLogEntry[];
+  footprintPlans?: FootprintPlan[];
+  planningWip?: PlanningWipRecord[];
   metadata?: Record<string, string | number | boolean>;
 }
 

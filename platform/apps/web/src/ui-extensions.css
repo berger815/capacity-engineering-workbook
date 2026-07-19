@@ -1,0 +1,388 @@
+.experience-toggle,
+.module-mode-tabs,
+.master-editor-tabs {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #c9d5e5;
+  border-radius: 8px;
+  background: #edf2f8;
+}
+
+.experience-toggle button,
+.module-mode-tabs button,
+.master-editor-tabs button {
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #34445a;
+  font-weight: 700;
+  padding: 7px 11px;
+  cursor: pointer;
+}
+
+.experience-toggle button.active,
+.module-mode-tabs button.active,
+.master-editor-tabs button.active {
+  background: #fff;
+  color: #0d3768;
+  box-shadow: 0 1px 4px rgba(16, 37, 63, .16);
+}
+
+.module-mode-tabs {
+  margin: 0 0 10px;
+}
+
+.data-studio > .data-workspace,
+.data-studio > .master-editor {
+  margin-top: 0;
+}
+
+.master-editor-tabs {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  justify-content: flex-start;
+}
+
+.master-editor-tabs button {
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.master-editor .table-wrap table,
+.footprint-panel .table-wrap table,
+.action-log-panel .table-wrap table {
+  min-width: 980px;
+}
+
+.master-editor input,
+.master-editor select,
+.footprint-panel input,
+.footprint-panel select,
+.action-log-panel input,
+.action-log-panel select,
+.action-log-panel textarea {
+  min-height: 32px;
+}
+
+.master-editor code {
+  font-size: 11px;
+  color: #52637a;
+}
+
+.number-input {
+  width: 86px;
+  text-align: right;
+}
+
+.reference-lock {
+  display: inline-flex;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #edf1f5;
+  color: #66758a;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.editor-save-bar {
+  position: sticky;
+  bottom: 8px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 14px 0 4px;
+  padding: 10px 12px;
+  border: 1px solid #c4d2e3;
+  border-radius: 9px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 5px 18px rgba(18, 42, 70, .15);
+  font-weight: 700;
+}
+
+.editor-save-bar > div {
+  display: flex;
+  gap: 8px;
+}
+
+.routing-builder {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.routing-list {
+  align-self: start;
+  display: grid;
+  gap: 5px;
+  max-height: 760px;
+  overflow: auto;
+}
+
+.routing-list > button:not(.secondary) {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #d7e0eb;
+  border-radius: 6px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.routing-list > button.active {
+  border-color: #2d6db1;
+  background: #eaf3fd;
+}
+
+.routing-list small {
+  color: #6c7a8b;
+}
+
+.routing-detail,
+.routing-columns {
+  display: grid;
+  gap: 12px;
+}
+
+.routing-columns {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.routing-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.routing-meta-grid label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4f6074;
+}
+
+.selected-row td {
+  background: #eef6ff;
+}
+
+.action-log-toolbar,
+.footprint-toolbar {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #d5dfeb;
+  border-radius: 8px;
+  background: #f7f9fc;
+}
+
+.action-log-toolbar label,
+.footprint-toolbar label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4f6074;
+}
+
+.action-log-panel textarea {
+  width: 280px;
+  min-height: 54px;
+  resize: vertical;
+}
+
+.related-fields {
+  display: grid;
+  gap: 4px;
+  min-width: 150px;
+}
+
+.status-toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.status-toggle.open {
+  background: #fff0cc;
+  color: #805400;
+}
+
+.status-toggle.resolved {
+  background: #dff3e7;
+  color: #17613a;
+}
+
+.resolved-row td {
+  opacity: .65;
+}
+
+.footprint-bar {
+  fill: #2d6db1;
+}
+
+.footprint-bar.over {
+  fill: #b94040;
+}
+
+.footprint-capacity {
+  stroke: #e07a23;
+  background: #e07a23;
+}
+
+.footprint-required {
+  background: #2d6db1;
+}
+
+.expert-mode .topbar {
+  min-height: 58px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.expert-mode .topbar h1 {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.expert-mode .topbar .eyebrow {
+  font-size: 9px;
+}
+
+.expert-mode .panel {
+  padding-top: 12px;
+}
+
+.expert-mode .panel-heading {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+}
+
+.expert-mode .panel-heading h2 {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.expert-mode .panel-heading > p {
+  display: none;
+}
+
+.expert-mode .callout {
+  padding: 8px 11px;
+  margin: 8px 0;
+}
+
+.expert-mode .callout span {
+  display: inline;
+  margin-right: 8px;
+}
+
+.expert-mode .callout strong {
+  display: inline;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.expert-mode .sidebar-note {
+  display: none;
+}
+
+.expert-mode .step-button small {
+  display: none;
+}
+
+.expert-mode .step-button {
+  min-height: 42px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.expert-mode .card,
+.expert-mode .analysis-card,
+.expert-mode .table-card,
+.expert-mode .preview,
+.expert-mode .data-editor {
+  padding: 10px;
+}
+
+.expert-mode .metric {
+  padding: 9px 10px;
+}
+
+.expert-mode .metric strong {
+  font-size: 20px;
+}
+
+.expert-mode table th,
+.expert-mode table td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.expert-mode input,
+.expert-mode select,
+.expert-mode button {
+  min-height: 30px;
+}
+
+.expert-mode .flow-strip {
+  margin: 8px 0;
+}
+
+.expert-mode .flow-strip small {
+  display: none;
+}
+
+.expert-mode .status-banner {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+@media (max-width: 900px) {
+  .routing-builder,
+  .routing-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .routing-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .experience-toggle {
+    order: 3;
+  }
+}
+
+@media (max-width: 620px) {
+  .editor-save-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .editor-save-bar > div,
+  .editor-save-bar button {
+    width: 100%;
+  }
+
+  .routing-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-log-toolbar,
+  .footprint-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
