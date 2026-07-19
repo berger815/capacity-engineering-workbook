@@ -1,8 +1,11 @@
 # PostgreSQL persistence
 
-`migrations/0001_core.sql` is the initial connected-platform persistence contract.
+The numbered migrations define the connected-platform persistence contract:
 
-It deliberately separates:
+- `migrations/0001_core.sql` establishes tenancy, canonical model data, imports, calculations, results, and audit.
+- `migrations/0002_scenario_actions.sql` adds governed recovery actions, immutable calculation-action snapshots, and baseline-versus-recovery comparison records.
+
+The schema deliberately separates:
 
 - identity and tenant membership;
 - organization hierarchy;
@@ -10,11 +13,16 @@ It deliberately separates:
 - products and effective-dated routing revisions;
 - sparse operation/resource requirements;
 - immutable scenarios and demand records;
+- dated recovery actions with target, owner, status, confidence, and inclusion state;
 - source snapshots, reusable mappings, and import jobs;
-- calculation runs and period results;
+- calculation runs, applied-action lineage, period results, and scenario comparisons;
 - append-only audit events.
 
-The calculation engine remains database-independent. A repository layer will assemble a canonical `CapacityModel`, calculate it with `@capacity/engine`, and persist immutable run metadata and results.
+The calculation engine remains database-independent. A repository layer will assemble a canonical `CapacityModel`, calculate it with `@capacity/engine`, and persist immutable run metadata, action snapshots, comparison summaries, and results.
+
+## Migration verification
+
+Platform CI starts a clean PostgreSQL 16 service, applies every migration in lexical order with `ON_ERROR_STOP=1`, verifies the recovery tables exist, and only then runs the application build, strict typecheck, and tests.
 
 ## Migration rule
 
