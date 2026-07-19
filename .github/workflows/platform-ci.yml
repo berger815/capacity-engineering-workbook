@@ -12,9 +12,6 @@ on:
       - "platform/**"
       - ".github/workflows/platform-ci.yml"
 
-permissions:
-  contents: write
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -38,33 +35,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
-      - name: Apply input-layer corrections
-        working-directory: .
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          calendars = Path('platform/packages/importer/src/calendars.ts')
-          text = calendars.read_text()
-          text = text.replace(
-              'if (value !== null) weeklyMinutes[dayIndex as 0 | 1 | 2 | 3 | 4 | 5 | 6] = value;',
-              'if (value !== null && value > 0) weeklyMinutes[dayIndex as 0 | 1 | 2 | 3 | 4 | 5 | 6] = value;'
-          )
-          calendars.write_text(text)
-
-          tests = Path('platform/apps/api/src/app.test.ts')
-          text = tests.read_text().replace('2030-01-01,2030-12-31', '2025-01-01,2025-12-31')
-          tests.write_text(text)
-          PY
-          if ! git diff --quiet -- platform/packages/importer/src/calendars.ts platform/apps/api/src/app.test.ts; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add platform/packages/importer/src/calendars.ts platform/apps/api/src/app.test.ts
-            git commit -m "fix(input): preserve sparse calendars and isolate routing salvage test"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
       - name: Enable pnpm
         run: corepack enable
       - name: Set up Node
@@ -88,21 +58,5 @@ jobs:
         run: pnpm build
       - name: Typecheck
         run: pnpm typecheck
-      - name: Capture tests
-        shell: bash
-        run: |
-          set +e
-          pnpm test > test.log 2>&1
-          status=$?
-          cat test.log
-          echo "$status" > test.status
-          exit 0
-      - name: Upload test diagnostics
-        uses: actions/upload-artifact@v4
-        with:
-          name: input-layer-tests
-          path: |
-            platform/test.log
-            platform/test.status
-      - name: Fail on test errors
-        run: test "$(cat test.status)" = "0"
+      - name: Test
+        run: pnpm test
