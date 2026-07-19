@@ -1,8 +1,8 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import type { CapacityModel } from "@capacity/domain";
 import { capacityModelSchema } from "@capacity/domain";
-import { calculateCapacity } from "@capacity/engine";
-import { northstarV2Model } from "@capacity/fixtures";
+import { calculateCapacity, compareCapacityScenarios } from "@capacity/engine";
+import { northstarRecoveryModel } from "@capacity/fixtures";
 import type { DemandCsvMapping } from "@capacity/importer";
 import { importDemandCsv, mergeDemandImport } from "@capacity/importer";
 
@@ -64,6 +64,13 @@ function validateImportRequest(body: unknown):
   };
 }
 
+function validatedModel(body: Record<string, unknown>): { model: CapacityModel } | { result: ApiResult } {
+  const validation = capacityModelSchema.safeParse(body.model);
+  return validation.success
+    ? { model: validation.data as CapacityModel }
+    : { result: validationFailure(validation.error.issues) };
+}
+
 export function routeApiRequest(method: string, path: string, body?: unknown): ApiResult {
   if (method === "GET" && path === "/health") {
     return {
@@ -77,7 +84,7 @@ export function routeApiRequest(method: string, path: string, body?: unknown): A
   }
 
   if (method === "GET" && path === "/v1/fixtures/northstar-v2") {
-    return { statusCode: 200, body: northstarV2Model };
+    return { statusCode: 200, body: northstarRecoveryModel };
   }
 
   if (method === "POST" && path === "/v1/validate") {
@@ -94,6 +101,8 @@ export function routeApiRequest(method: string, path: string, body?: unknown): A
               resourceGroups: validation.data.resourceGroups.length,
               routingRevisions: validation.data.routingRevisions.length,
               demandRecords: validation.data.demand.length,
+              scenarios: validation.data.scenarios.length,
+              scenarioActions: validation.data.scenarioActions?.length ?? 0,
             },
           },
         }
@@ -156,18 +165,49 @@ export function routeApiRequest(method: string, path: string, body?: unknown): A
       return { statusCode: 400, body: { code: "SCENARIO_REQUIRED", message: "scenarioId is required" } };
     }
 
-    const validation = capacityModelSchema.safeParse(body.model);
-    if (!validation.success) return validationFailure(validation.error.issues);
+    const validation = validatedModel(body);
+    if ("result" in validation) return validation.result;
 
     try {
-      const result = calculateCapacity(validation.data as CapacityModel, scenarioId);
-      return { statusCode: 200, body: result };
+      return { statusCode: 200, body: calculateCapacity(validation.model, scenarioId) };
     } catch (error) {
       return {
         statusCode: 400,
         body: {
           code: "CALCULATION_REJECTED",
           message: error instanceof Error ? error.message : "Calculation rejected",
+        },
+      };
+    }
+  }
+
+  if (method === "POST" && path === "/v1/compare") {
+    if (!isRecord(body)) {
+      return { statusCode: 400, body: { code: "INVALID_REQUEST", message: "JSON object required" } };
+    }
+    const baselineScenarioId = body.baselineScenarioId;
+    const comparisonScenarioId = body.comparisonScenarioId;
+    if (typeof baselineScenarioId !== "string" || baselineScenarioId.length === 0) {
+      return { statusCode: 400, body: { code: "BASELINE_SCENARIO_REQUIRED", message: "baselineScenarioId is required" } };
+    }
+    if (typeof comparisonScenarioId !== "string" || comparisonScenarioId.length === 0) {
+      return { statusCode: 400, body: { code: "COMPARISON_SCENARIO_REQUIRED", message: "comparisonScenarioId is required" } };
+    }
+
+    const validation = validatedModel(body);
+    if ("result" in validation) return validation.result;
+
+    try {
+      return {
+        statusCode: 200,
+        body: compareCapacityScenarios(validation.model, baselineScenarioId, comparisonScenarioId),
+      };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        body: {
+          code: "COMPARISON_REJECTED",
+          message: error instanceof Error ? error.message : "Comparison rejected",
         },
       };
     }
