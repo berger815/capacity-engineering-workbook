@@ -12,9 +12,6 @@ on:
       - "platform/**"
       - ".github/workflows/platform-ci.yml"
 
-permissions:
-  contents: write
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -38,27 +35,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
-      - name: Apply chart boundary guard
-        working-directory: .
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          path = Path('platform/apps/web/src/RecoveryPanel.tsx')
-          text = path.read_text()
-          old = '          const row = rows[index];\n          const cx = left + index * step + step / 2;'
-          new = '          const row = rows[index];\n          if (!row) return null;\n          const cx = left + index * step + step / 2;'
-          if old in text:
-              path.write_text(text.replace(old, new, 1))
-          PY
-          if ! git diff --quiet -- platform/apps/web/src/RecoveryPanel.tsx; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add platform/apps/web/src/RecoveryPanel.tsx
-            git commit -m "fix(web): guard recovery milestone chart boundary"
-            git push origin HEAD:${{ github.head_ref || github.ref_name }}
-          fi
       - name: Enable pnpm
         run: corepack enable
       - name: Set up Node
