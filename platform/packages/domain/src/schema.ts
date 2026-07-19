@@ -135,6 +135,52 @@ const demandRecordSchema = z.object({
   customerOrProgram: z.string().optional(), sourceSystem: z.string().optional(), sourceRecordId: z.string().optional(),
 });
 
+const actionLogEntrySchema = z.object({
+  id,
+  createdAt: z.string().datetime(),
+  createdBy: z.string().optional(),
+  category: z.enum(["data","assumption","risk","decision","followUp","general"]),
+  note: z.string().min(1),
+  relatedEntityType: z.string().optional(),
+  relatedEntityId: id.optional(),
+  owner: z.string().optional(),
+  dueDate: isoDate.optional(),
+  resolvedAt: z.string().datetime().optional(),
+});
+
+const planningWipRecordSchema = z.object({
+  id,
+  scenarioId: id,
+  productId: id,
+  periodStart: isoDate,
+  quantity: z.number().nonnegative(),
+  basis: z.enum(["estimated","reported","derived"]),
+  sourceSystem: z.string().optional(),
+  confidence: z.enum(["high","medium","low","unknown"]).optional(),
+  notes: z.string().optional(),
+});
+
+const footprintPlanSchema = z.object({
+  id,
+  departmentOrArea: z.string().min(1),
+  organizationNodeId: id.optional(),
+  calendarId: id.optional(),
+  productId: id.optional(),
+  productFamily: z.string().optional(),
+  dwellWorkingDays: z.number().nonnegative(),
+  spacePerUnit: z.number().nonnegative(),
+  basis: z.enum(["squareFeet","palletPositions","custom"]),
+  availableCapacity: z.number().nonnegative(),
+  peakFactor: z.number().positive(),
+  source: z.string().optional(),
+  confidence: z.enum(["high","medium","low","unknown"]).optional(),
+  notes: z.string().optional(),
+}).superRefine((plan, ctx) => {
+  if (plan.productId && plan.productFamily) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "use either productId or productFamily, not both", path: ["productFamily"] });
+  }
+});
+
 export const capacityModelSchema = z.object({
   schemaVersion: z.string().min(1), modelId: id, name: z.string().min(1), planningGranularity: z.enum(["week","month"]),
   horizonStart: isoDate, horizonEnd: isoDate,
@@ -143,6 +189,9 @@ export const capacityModelSchema = z.object({
   products: z.array(productSchema).min(1), routingRevisions: z.array(routingRevisionSchema),
   scenarios: z.array(scenarioSchema).min(1), demand: z.array(demandRecordSchema),
   scenarioActions: z.array(scenarioActionSchema).optional(),
+  actionLog: z.array(actionLogEntrySchema).optional(),
+  footprintPlans: z.array(footprintPlanSchema).optional(),
+  planningWip: z.array(planningWipRecordSchema).optional(),
   metadata: z.record(z.union([z.string(),z.number(),z.boolean()])).optional(),
 }).superRefine((model, ctx) => {
   const unique = (values: string[], path: (string | number)[]) => {
@@ -157,11 +206,16 @@ export const capacityModelSchema = z.object({
   unique(model.scenarios.map(x=>x.id), ["scenarios"]);
   unique(model.demand.map(x=>x.id), ["demand"]);
   unique((model.scenarioActions ?? []).map(x=>x.id), ["scenarioActions"]);
+  unique((model.actionLog ?? []).map(x=>x.id), ["actionLog"]);
+  unique((model.footprintPlans ?? []).map(x=>x.id), ["footprintPlans"]);
+  unique((model.planningWip ?? []).map(x=>x.id), ["planningWip"]);
 
   const scenarios = new Map(model.scenarios.map(item => [item.id, item]));
   const resources = new Set(model.resources.map(item => item.id));
   const resourceGroups = new Set(model.resourceGroups.map(item => item.id));
   const products = new Set(model.products.map(item => item.id));
+  const calendars = new Set(model.calendars.map(item => item.id));
+  const organization = new Set(model.organization.map(item => item.id));
 
   model.scenarios.forEach((scenario, index) => {
     if (scenario.parentScenarioId && !scenarios.has(scenario.parentScenarioId)) {
@@ -204,6 +258,17 @@ export const capacityModelSchema = z.object({
     if (action.kind === "demandMultiplier" && action.productId && !products.has(action.productId)) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "action product does not exist", path: ["scenarioActions", index, "productId"] });
     }
+  });
+
+  (model.planningWip ?? []).forEach((record, index) => {
+    if (!scenarios.has(record.scenarioId)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "WIP scenario does not exist", path: ["planningWip", index, "scenarioId"] });
+    if (!products.has(record.productId)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "WIP product does not exist", path: ["planningWip", index, "productId"] });
+  });
+
+  (model.footprintPlans ?? []).forEach((plan, index) => {
+    if (plan.productId && !products.has(plan.productId)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "footprint product does not exist", path: ["footprintPlans", index, "productId"] });
+    if (plan.calendarId && !calendars.has(plan.calendarId)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "footprint calendar does not exist", path: ["footprintPlans", index, "calendarId"] });
+    if (plan.organizationNodeId && !organization.has(plan.organizationNodeId)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "footprint organization node does not exist", path: ["footprintPlans", index, "organizationNodeId"] });
   });
 });
 
