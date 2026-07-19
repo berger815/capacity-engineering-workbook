@@ -12,9 +12,6 @@ on:
       - "platform/**"
       - ".github/workflows/platform-ci.yml"
 
-permissions:
-  contents: write
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -38,37 +35,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
-      - name: Apply typed editor corrections
-        working-directory: .
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          path = Path('platform/apps/web/src/AnalysisExplorer.tsx')
-          text = path.read_text()
-          text = text.replace(
-          '''    Object.assign(record, { [field]: value });''',
-          '''    if (field === "quantity") record.quantity = Number(value);\n    else if (field === "productId") record.productId = String(value);\n    else record.shipDate = String(value);''')
-          text = text.replace(
-          '''    Object.assign(phase, { [field]: value });''',
-          '''    if (field === "startWeeksBeforeShip") phase.startWeeksBeforeShip = Number(value);\n    else if (field === "endWeeksBeforeShip") phase.endWeeksBeforeShip = Number(value);\n    else if (field === "allocation") phase.allocation = value as typeof phase.allocation;\n    else phase.name = String(value);''')
-          combo_call = '<LoadCapacityComboChart labels={points.map(point => point.label)} load={points.map(point => point.quantity)} capacity={points.map(point => point.quantity)} />'
-          bar_call = '<DemandBarChart labels={points.map(point => point.label)} values={points.map(point => point.quantity)} />'
-          text = text.replace(combo_call, bar_call)
-          marker = 'function GapBarChart({ labels, baseline, recovery }: { labels: string[]; baseline: number[]; recovery?: number[] }) {'
-          demand_bar = '''function DemandBarChart({ labels, values }: { labels: string[]; values: number[] }) {\n  const width = 980;\n  const height = 300;\n  const margin = { top: 20, right: 24, bottom: 54, left: 64 };\n  const plotWidth = width - margin.left - margin.right;\n  const plotHeight = height - margin.top - margin.bottom;\n  const maximum = Math.max(1, ...values) * 1.08;\n  const groupWidth = plotWidth / Math.max(labels.length, 1);\n  const barWidth = Math.max(6, Math.min(42, groupWidth * .65));\n  const y = (value: number) => margin.top + plotHeight - value / maximum * plotHeight;\n  return <div className="chart-frame"><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Shipment demand bar chart">\n    {[0, .25, .5, .75, 1].map(fraction => { const value = maximum * fraction; return <g key={fraction}><line className="chart-grid" x1={margin.left} x2={width - margin.right} y1={y(value)} y2={y(value)} /><text className="chart-axis-label" x={margin.left - 8} y={y(value) + 4} textAnchor="end">{Math.round(value)}</text></g>; })}\n    {values.map((value, index) => <rect key={index} className="timeline-bar" x={margin.left + groupWidth * index + (groupWidth - barWidth) / 2} y={y(value)} width={barWidth} height={Math.max(1, margin.top + plotHeight - y(value))}><title>{`${labels[index]} · ${value}`}</title></rect>)}\n    {labels.map((label, index) => <text key={`${label}-${index}`} className="chart-x-label" x={margin.left + groupWidth * index + groupWidth / 2} y={height - 20} textAnchor="middle">{label}</text>)}\n  </svg></div>;\n}\n\n'''
-          if 'function DemandBarChart(' not in text:
-              text = text.replace(marker, demand_bar + marker)
-          path.write_text(text)
-          PY
-          if ! git diff --quiet -- platform/apps/web/src/AnalysisExplorer.tsx; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add platform/apps/web/src/AnalysisExplorer.tsx
-            git commit -m "fix(web): type demand and lead-time editor updates"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
       - name: Enable pnpm
         run: corepack enable
       - name: Set up Node
@@ -90,7 +56,24 @@ jobs:
           psql --host 127.0.0.1 --username postgres --dbname capacity_assurance_test --set ON_ERROR_STOP=1 --command "SELECT to_regclass('public.scenario_actions') AS scenario_actions, to_regclass('public.calculation_run_actions') AS calculation_run_actions;"
       - name: Build
         run: pnpm build
-      - name: Typecheck
-        run: pnpm typecheck
+      - name: Capture typecheck
+        id: typecheck
+        shell: bash
+        run: |
+          set +e
+          pnpm typecheck > ../typecheck.log 2>&1
+          code=$?
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload typecheck diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: focused-typecheck
+          path: typecheck.log
+      - name: Fail on typecheck errors
+        if: steps.typecheck.outputs.exit_code != '0'
+        run: |
+          cat ../typecheck.log
+          exit 1
       - name: Test
         run: pnpm test
