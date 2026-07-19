@@ -12,13 +12,13 @@ export interface BaseImportMapping {
 }
 
 export interface ImportIssue {
-  rowNumber?: number;
-  entityKey?: string;
+  rowNumber?: number | undefined;
+  entityKey?: string | undefined;
   severity: "error" | "warning";
   code: string;
   message: string;
-  column?: string;
-  value?: string;
+  column?: string | undefined;
+  value?: string | undefined;
 }
 
 export interface BaseImportControlTotals {
