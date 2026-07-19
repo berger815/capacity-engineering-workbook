@@ -11,6 +11,7 @@ import {
   type ModelValidationResult,
 } from "./api.js";
 import { formatPercent, rankConstraintPeriods, summarizeDecision } from "./analysis.js";
+import AnalysisExplorer from "./AnalysisExplorer.js";
 import ConstraintExplorer from "./ConstraintExplorer.js";
 import DecisionExports from "./DecisionExports.js";
 import RecoveryPanel from "./RecoveryPanel.js";
@@ -20,7 +21,8 @@ const steps = [
   { id: "scope", label: "Scope", help: "Define the decision and boundaries" },
   { id: "data", label: "Data", help: "Load and reconcile the facts" },
   { id: "readiness", label: "Readiness", help: "Resolve decision-blocking gaps" },
-  { id: "analysis", label: "Analysis", help: "Calculate load and capacity" },
+  { id: "analysis", label: "Calculate", help: "Place load against capacity" },
+  { id: "capacity", label: "Capacity Analysis", help: "Explore charts, gaps, and detail" },
   { id: "recovery", label: "Recovery", help: "Test governed countermeasures" },
   { id: "decision", label: "Decision", help: "Commit with evidence" },
 ] as const;
@@ -73,7 +75,7 @@ function StatusBanner({ validation, calculation }: { validation: ModelValidation
   const blocking = calculation.issues.filter(issue => issue.severity === "error").length;
   return blocking > 0
     ? <div className="status-banner bad">Calculation completed with {blocking} blocking issue{blocking === 1 ? "" : "s"}.</div>
-    : <div className="status-banner good">Baseline calculation completed with no blocking model errors.</div>;
+    : <div className="status-banner good">Baseline calculation completed. Capacity Analysis is ready for exploration.</div>;
 }
 
 export default function App() {
@@ -130,7 +132,7 @@ export default function App() {
       const result = await calculateModel(model, baselineScenarioId);
       setCalculation(result);
       setComparison(null);
-      setActiveStep("recovery");
+      setActiveStep("capacity");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Calculation failed");
     } finally {
@@ -204,7 +206,7 @@ export default function App() {
         <aside>
           <div className="assessment-id"><span>Current assessment</span><strong>{model?.name ?? "Loading…"}</strong><small>{model ? `${model.horizonStart} → ${model.horizonEnd}` : ""}</small></div>
           <StepNav active={activeStep} onSelect={setActiveStep} />
-          <div className="sidebar-note"><strong>The decision question</strong><p>Can this operation meet committed demand, what fails first, and what must change?</p></div>
+          <div className="sidebar-note"><strong>Guided + analyst workflow</strong><p>Frame the decision, calculate once, interrogate the charts and detail, then build a governed recovery plan.</p></div>
         </aside>
 
         <main>
@@ -267,7 +269,7 @@ export default function App() {
               <div className={`readiness-score ${validation?.valid ? "ready" : "blocked"}`}><div><span>Structural readiness</span><strong>{validation?.valid ? "Ready to calculate" : "Blocked"}</strong></div><div className="score-ring">{validation?.valid ? "✓" : issueCount}</div></div>
               <div className="metric-grid four"><Metric label="Products" value={counts?.products ?? "—"} note="Each has an effective route" /><Metric label="Routes" value={counts?.routingRevisions ?? "—"} note="Sparse and revision-aware" /><Metric label="Scenarios" value={counts?.scenarios ?? model?.scenarios.length ?? "—"} note="Baseline remains protected" /><Metric label="Blocking issues" value={validation?.valid ? 0 : issueCount} note="Must be resolved" /></div>
               {validation?.issues?.length ? <div className="issue-list large">{validation.issues.map((issue, index) => <div key={`${issue.path}-${index}`}><strong>{issue.path || "Model"}</strong><span>{issue.message}</span></div>)}</div> : <div className="card"><h3>What has been checked</h3><ul className="check-list"><li>Required model sections are present.</li><li>Identifiers and recovery targets are valid.</li><li>Scenario lineage contains no cycles.</li><li>Rejected actions cannot be calculated.</li><li>Missing, zero, and not-applicable requirements remain distinct.</li></ul></div>}
-              <div className="panel-actions split"><button className="secondary" type="button" onClick={() => setActiveStep("data")}>Back</button><button className="primary" type="button" disabled={!validation?.valid || busy !== null} onClick={() => setActiveStep("analysis")}>Continue to analysis</button></div>
+              <div className="panel-actions split"><button className="secondary" type="button" onClick={() => setActiveStep("data")}>Back</button><button className="primary" type="button" disabled={!validation?.valid || busy !== null} onClick={() => setActiveStep("analysis")}>Continue to calculation</button></div>
             </section>
           )}
 
@@ -276,25 +278,29 @@ export default function App() {
               <div className="panel-heading"><div><span className="eyebrow blue">Step 4</span><h2>Place work when it must occur—not only when it ships</h2></div><p>The engine shifts each product’s labor and equipment requirements into its applicable lead-time phases, then compares period load against calendar capacity.</p></div>
               <div className="flow-strip"><div><span>1</span><strong>Demand</strong><small>Customer ship dates</small></div><i>→</i><div><span>2</span><strong>Routing</strong><small>Applicable work only</small></div><i>→</i><div><span>3</span><strong>Lead time</strong><small>Work shifted earlier</small></div><i>→</i><div><span>4</span><strong>Capacity</strong><small>Calendars and effectiveness</small></div><i>→</i><div><span>5</span><strong>Constraint</strong><small>What fails first</small></div></div>
               <div className="callout amber"><span>Why this matters</span><strong>A 2027 shipment can consume welding, machining, or tooling capacity in 2026. Annual averages can therefore look healthy while the launch still fails.</strong></div>
-              <div className="analysis-ready"><div><span>Scenario</span><strong>{model?.scenarios.find(scenario => scenario.id === baselineScenarioId)?.name ?? baselineScenarioId}</strong></div><div><span>Horizon</span><strong>{model?.horizonStart} → {model?.horizonEnd}</strong></div><div><span>Resolution</span><strong>{model?.planningGranularity}</strong></div><button className="primary large" type="button" disabled={!model || !validation?.valid || busy !== null} onClick={() => void runCalculation()}>{busy === "calculating" ? "Calculating…" : "Run baseline analysis"}</button></div>
-              <div className="panel-actions"><button className="secondary" type="button" onClick={() => setActiveStep("readiness")}>Back</button></div>
+              <div className="analysis-ready"><div><span>Scenario</span><strong>{model?.scenarios.find(scenario => scenario.id === baselineScenarioId)?.name ?? baselineScenarioId}</strong></div><div><span>Horizon</span><strong>{model?.horizonStart} → {model?.horizonEnd}</strong></div><div><span>Native resolution</span><strong>{model?.planningGranularity}</strong></div><button className="primary large" type="button" disabled={!model || !validation?.valid || busy !== null} onClick={() => void runCalculation()}>{busy === "calculating" ? "Calculating…" : "Run baseline calculation"}</button></div>
+              <div className="panel-actions split"><button className="secondary" type="button" onClick={() => setActiveStep("readiness")}>Back</button>{calculation ? <button className="primary" type="button" onClick={() => setActiveStep("capacity")}>Open Capacity Analysis</button> : null}</div>
             </section>
           )}
 
-          {activeStep === "recovery" && model ? <RecoveryPanel model={model} comparison={comparison} onModelChange={updateRecoveryModel} onComparison={setComparison} onBack={() => setActiveStep("analysis")} onContinue={() => setActiveStep("decision")} /> : null}
+          {activeStep === "capacity" && model && calculation ? <AnalysisExplorer model={model} baseline={calculation} comparison={comparison} onBack={() => setActiveStep("analysis")} onContinue={() => setActiveStep("recovery")} /> : null}
+
+          {activeStep === "capacity" && (!model || !calculation) ? <section className="panel"><div className="empty-state"><h3>Run the baseline calculation first</h3><p>Capacity Analysis needs calculated period results before charts and drill-through can be displayed.</p><button className="primary" type="button" onClick={() => setActiveStep("analysis")}>Go to calculation</button></div></section> : null}
+
+          {activeStep === "recovery" && model ? <RecoveryPanel model={model} comparison={comparison} onModelChange={updateRecoveryModel} onComparison={setComparison} onBack={() => setActiveStep(calculation ? "capacity" : "analysis")} onContinue={() => setActiveStep("decision")} /> : null}
 
           {activeStep === "decision" && (
             <section className="panel">
-              <div className="panel-heading"><div><span className="eyebrow blue">Step 6</span><h2>Make the capacity decision</h2></div><p>The decision states whether the current plan is supportable, what action basis was tested, and what exposure remains.</p></div>
-              {!decisionCalculation || !decision ? <div className="empty-state"><h3>No defensible decision exists yet</h3><p>Run the baseline and compare a governed recovery scenario before publishing a commitment.</p><button className="primary" type="button" onClick={() => setActiveStep(calculation ? "recovery" : "analysis")}>{calculation ? "Go to recovery" : "Go to analysis"}</button></div> : <>
+              <div className="panel-heading"><div><span className="eyebrow blue">Step 7</span><h2>Make the capacity decision</h2></div><p>The decision states whether the current plan is supportable, what action basis was tested, and what exposure remains.</p></div>
+              {!decisionCalculation || !decision ? <div className="empty-state"><h3>No defensible decision exists yet</h3><p>Run the baseline, explore Capacity Analysis, and compare a governed recovery scenario before publishing a commitment.</p><button className="primary" type="button" onClick={() => setActiveStep(calculation ? "capacity" : "analysis")}>{calculation ? "Open Capacity Analysis" : "Go to calculation"}</button></div> : <>
                 {comparison && baselineDecision ? <div className="decision-comparison-strip"><div><span>Baseline</span><strong>{baselineDecision.headline}</strong><small>{baselineDecision.governing ? `${names[baselineDecision.governing.resourceGroupId] ?? baselineDecision.governing.resourceGroupId} · ${formatPercent(baselineDecision.governing.utilization)}` : "No governing constraint"}</small></div><div className="scenario-arrow">→</div><div><span>Recovery</span><strong>{decision.headline}</strong><small>{decision.governing ? `${names[decision.governing.resourceGroupId] ?? decision.governing.resourceGroupId} · ${formatPercent(decision.governing.utilization)}` : "No governing constraint"}</small></div></div> : null}
                 <div className={`decision-hero ${decision.state}`}><span>{comparison ? "Recovery decision" : decision.state === "gap" ? "Capacity gap" : decision.state === "watch" ? "Constrained plan" : decision.state === "ready" ? "Supportable plan" : "Incomplete decision"}</span><h3>{decision.headline}</h3><p>{decision.explanation}</p></div>
                 <div className="metric-grid four"><Metric label="Governing resource" value={decision.governing ? names[decision.governing.resourceGroupId] ?? decision.governing.resourceGroupId : "—"} /><Metric label="Peak utilization" value={formatPercent(decision.governing?.utilization ?? null)} /><Metric label="Gap periods remaining" value={comparison?.remainingGapPeriods ?? decisionCalculation.results.filter(row => row.gap < 0).length} note={comparison ? `${comparison.resolvedGapPeriods} resolved by recovery` : "Baseline exposure"} /><Metric label="Actions in lineage" value={comparison?.appliedActionIds.length ?? 0} note="Reproducible calculation basis" /></div>
-                <div className="two-column decision-columns"><article className="card"><h3>Recommendation</h3><p>{decision.state === "gap" ? "Do not publish the commitment yet. The modeled recovery still leaves capacity gaps; revise the action timing, magnitude, or demand assumption and compare again." : decision.state === "watch" ? "Treat the commitment as conditional. The recovery improves the plan, but the governing margin remains narrow and requires explicit operating controls." : decision.state === "ready" ? "The modeled recovery supports the plan. Preserve the action register, source data, assumptions, and calculation lineage before publishing the commitment." : "Resolve blocking data issues before making a capacity decision."}</p></article><article className="card"><h3>Decision evidence</h3><ul><li>Protected baseline calculation</li><li>Named recovery actions and owners</li><li>Effective dates and approval states</li><li>Remaining constraint periods</li><li>Model warnings: {warningCount}</li></ul></article></div>
+                <div className="two-column decision-columns"><article className="card"><h3>Recommendation</h3><p>{decision.state === "gap" ? "Do not publish the commitment yet. The modeled recovery still leaves capacity gaps; revise the action timing, magnitude, or demand assumption and compare again." : decision.state === "watch" ? "Treat the commitment as conditional. The recovery improves the plan, but the governing margin remains narrow and requires explicit operating controls." : decision.state === "ready" ? "The modeled recovery supports the plan. Preserve the action register, source data, assumptions, and calculation lineage before publishing the commitment." : "Resolve blocking data issues before making a capacity decision."}</p></article><article className="card"><h3>Decision evidence</h3><ul><li>Protected baseline calculation</li><li>Capacity Analysis charts and drill-through</li><li>Named recovery actions and owners</li><li>Effective dates and approval states</li><li>Remaining constraint periods</li><li>Model warnings: {warningCount}</li></ul></article></div>
                 {model ? <ConstraintExplorer model={model} scenarioId={decisionCalculation.scenarioId} rows={constraints} title="Highest-risk periods after recovery" subtitle="Select Explain to trace a period back to products, operations, standards, phases, and demand records." onReviseRecovery={() => setActiveStep("recovery")} /> : null}
               </>}
               <div className="panel-actions split">
-                <button className="secondary" type="button" onClick={() => setActiveStep("recovery")}>Back</button>
+                <button className="secondary" type="button" onClick={() => setActiveStep("capacity")}>Back to Capacity Analysis</button>
                 {model && comparison ? <DecisionExports model={model} comparison={comparison} /> : <button className="primary" type="button" disabled>Decision package unavailable</button>}
               </div>
             </section>
