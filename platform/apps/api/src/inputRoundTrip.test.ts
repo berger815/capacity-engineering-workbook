@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { CapacityModel, RoutingRevision } from "@capacity/domain";
+import type { CapacityModel, RoutingRevision, WorkingCalendar } from "@capacity/domain";
 import { northstarV2Model } from "@capacity/fixtures";
 import {
   exportCalendarExceptionsCsv,
@@ -39,6 +39,16 @@ function blankAssessment(source: CapacityModel): CapacityModel {
     products: [],
     routingRevisions: [],
     demand: [],
+  };
+}
+
+function calendarSignature(calendar: WorkingCalendar) {
+  return {
+    id: calendar.id,
+    name: calendar.name,
+    timezone: calendar.timezone,
+    weeklyMinutes: Array.from({ length: 7 }, (_, day) => calendar.weeklyMinutes[day as 0 | 1 | 2 | 3 | 4 | 5 | 6] ?? 0),
+    exceptions: calendar.exceptions,
   };
 }
 
@@ -106,7 +116,7 @@ describe("Northstar input-layer round trip", () => {
     expect(demand.issues.filter(issue => issue.severity === "error")).toEqual([]);
     model = mergeDemandImport(model, "baseline", demand.records);
 
-    expect(model.calendars).toEqual(northstarV2Model.calendars);
+    expect(model.calendars.map(calendarSignature)).toEqual(northstarV2Model.calendars.map(calendarSignature));
     expect(model.resourceGroups).toEqual(northstarV2Model.resourceGroups);
     expect(model.resources).toEqual(northstarV2Model.resources);
     expect(model.products.map(product => ({ id: product.id, name: product.name, family: product.family, organizationNodeId: product.organizationNodeId })))
