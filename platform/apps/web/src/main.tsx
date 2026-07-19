@@ -5,6 +5,7 @@ import "./styles.css";
 import "./recovery.css";
 import "./exports.css";
 import "./explanation.css";
+import "./harmonize.css";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Application root was not found");
