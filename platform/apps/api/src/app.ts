@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import type { CapacityModel } from "@capacity/domain";
 import { capacityModelSchema } from "@capacity/domain";
 import { calculateCapacity, compareCapacityScenarios } from "@capacity/engine";
+import { explainConstraint } from "@capacity/engine/explain";
 import { northstarRecoveryModel } from "@capacity/fixtures";
 import type { DemandCsvMapping } from "@capacity/importer";
 import { importDemandCsv, mergeDemandImport } from "@capacity/importer";
@@ -134,8 +135,7 @@ export function routeApiRequest(method: string, path: string, body?: unknown): A
     const request = validateImportRequest(body);
     if (!request.ok) return request.result;
     try {
-      const result = importDemandCsv(request.csv, request.model.products, request.scenarioId, request.mapping);
-      return { statusCode: 200, body: result };
+      return { statusCode: 200, body: importDemandCsv(request.csv, request.model.products, request.scenarioId, request.mapping) };
     } catch (error) {
       return {
         statusCode: 400,
@@ -205,6 +205,36 @@ export function routeApiRequest(method: string, path: string, body?: unknown): A
       return {
         statusCode: 400,
         body: { code: "COMPARISON_REJECTED", message: error instanceof Error ? error.message : "Comparison rejected" },
+      };
+    }
+  }
+
+  if (method === "POST" && path === "/v1/explain") {
+    if (!isRecord(body)) return { statusCode: 400, body: { code: "INVALID_REQUEST", message: "JSON object required" } };
+    const scenarioId = body.scenarioId;
+    const resourceGroupId = body.resourceGroupId;
+    const periodStart = body.periodStart;
+    if (typeof scenarioId !== "string" || scenarioId.length === 0) {
+      return { statusCode: 400, body: { code: "SCENARIO_REQUIRED", message: "scenarioId is required" } };
+    }
+    if (typeof resourceGroupId !== "string" || resourceGroupId.length === 0) {
+      return { statusCode: 400, body: { code: "RESOURCE_GROUP_REQUIRED", message: "resourceGroupId is required" } };
+    }
+    if (typeof periodStart !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(periodStart)) {
+      return { statusCode: 400, body: { code: "PERIOD_START_INVALID", message: "periodStart must be an ISO date" } };
+    }
+    const validation = validatedModel(body);
+    if ("result" in validation) return validation.result;
+
+    try {
+      return {
+        statusCode: 200,
+        body: explainConstraint(validation.model, scenarioId, resourceGroupId, periodStart),
+      };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        body: { code: "EXPLANATION_REJECTED", message: error instanceof Error ? error.message : "Constraint explanation rejected" },
       };
     }
   }
