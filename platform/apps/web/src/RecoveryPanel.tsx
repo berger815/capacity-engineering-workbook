@@ -111,6 +111,7 @@ function RecoveryTrend({ rows, actions }: { rows: ScenarioComparisonRow[]; actio
           const index = rows.findIndex(row => row.periodStart >= action.effectiveFrom.slice(0, 10));
           if (index < 0) return null;
           const row = rows[index];
+          if (!row) return null;
           const cx = left + index * step + step / 2;
           return <circle key={action.id} cx={cx} cy={y(row.comparison.capacity)} r="5" className="recovery-milestone-dot"><title>{action.name} · {action.effectiveFrom}</title></circle>;
         })}
