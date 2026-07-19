@@ -15,7 +15,6 @@ import {
   genericResourceGroupProfile,
   genericResourceProfile,
   genericRoutingProfile,
-  type SavedSourceProfile,
 } from "@capacity/importer";
 import { applyInputImport, previewInputImport, type InputEntity, type InputPreview } from "./inputApi.js";
 import { readTabularFile, type WorkbookData } from "./workbookReader.js";
@@ -27,6 +26,17 @@ interface DataWorkspaceProps {
   onModelChange: (model: CapacityModel) => Promise<void> | void;
   onBack: () => void;
   onContinue: () => void;
+}
+
+interface StoredProfile {
+  id: string;
+  version: number;
+  entity: InputEntity;
+  label: string;
+  sourceSystem: string;
+  mapping: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface EntityDefinition {
@@ -107,17 +117,17 @@ function cloneMapping(mapping: Record<string, unknown>): Record<string, unknown>
   return JSON.parse(JSON.stringify(mapping)) as Record<string, unknown>;
 }
 
-function storedProfiles(): Array<SavedSourceProfile<Record<string, unknown>>> {
+function storedProfiles(): StoredProfile[] {
   if (typeof window === "undefined") return [];
   try {
     const value = JSON.parse(window.localStorage.getItem("capacity-input-profiles-v1") ?? "[]") as unknown;
-    return Array.isArray(value) ? value as Array<SavedSourceProfile<Record<string, unknown>>> : [];
+    return Array.isArray(value) ? value as StoredProfile[] : [];
   } catch {
     return [];
   }
 }
 
-function saveProfiles(profiles: Array<SavedSourceProfile<Record<string, unknown>>>): void {
+function saveProfiles(profiles: StoredProfile[]): void {
   window.localStorage.setItem("capacity-input-profiles-v1", JSON.stringify(profiles));
 }
 
@@ -147,12 +157,14 @@ export default function DataWorkspace({ model, baselineScenarioId, onModelChange
   const [mode, setMode] = useState<"append" | "replaceById">("replaceById");
   const [busy, setBusy] = useState<"reading" | "previewing" | "applying" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(storedProfiles);
+  const [saved, setSaved] = useState<StoredProfile[]>(storedProfiles);
   const [profileId, setProfileId] = useState(definition.profile.id);
   const [profileName, setProfileName] = useState("");
 
   const dependenciesReady = definition.dependencies.every(required => dependencyCount(model, required) > 0);
-  const missingDependencies = definition.dependencies.filter(required => dependencyCount(model, required) === 0).map(required => definitions.find(item => item.id === required)?.label ?? required);
+  const missingDependencies = definition.dependencies
+    .filter(required => dependencyCount(model, required) === 0)
+    .map(required => definitions.find(item => item.id === required)?.label ?? required);
   const entityProfiles = useMemo(() => saved.filter(profile => profile.entity === entity), [entity, saved]);
 
   function selectEntity(next: InputEntity): void {
@@ -226,7 +238,7 @@ export default function DataWorkspace({ model, baselineScenarioId, onModelChange
     const label = profileName.trim();
     if (!label) return;
     const now = new Date().toISOString();
-    const profile: SavedSourceProfile<Record<string, unknown>> = {
+    const profile: StoredProfile = {
       id: `custom-${entity}-${crypto.randomUUID()}`,
       version: 1,
       entity,
@@ -282,17 +294,19 @@ export default function DataWorkspace({ model, baselineScenarioId, onModelChange
     }
   }
 
-  const totals = preview ? Object.entries(preview.controlTotals).filter(([, value]) => typeof value === "number" || typeof value === "string") : [];
+  const totals = preview
+    ? Object.entries(preview.controlTotals).filter(([, value]) => typeof value === "number" || typeof value === "string")
+    : [];
 
   return <section className="panel data-workspace">
     <div className="panel-heading"><div><span className="eyebrow blue">Step 2 · Data</span><h2>Build and reconcile the assessment model</h2></div><p>Import in dependency order. Every entity uses the same file, mapping, preview, reconciliation, and atomic-apply workflow.</p></div>
 
     <div className="intake-grid">
-      {definitions.map(item => {
+      {definitions.map((item, index) => {
         const count = item.count(model);
         const blocked = item.dependencies.some(required => dependencyCount(model, required) === 0);
         return <button key={item.id} type="button" className={`intake-row ${entity === item.id ? "active" : ""}`} onClick={() => selectEntity(item.id)}>
-          <span className="intake-order">{definitions.indexOf(item) + 1}</span>
+          <span className="intake-order">{index + 1}</span>
           <span><strong>{item.label}</strong><small>{item.note}</small></span>
           <b>{count.toLocaleString()}</b>
           <i className={count > 0 ? "ready" : blocked ? "blocked" : "missing"}>{count > 0 ? "Loaded" : blocked ? "Waiting" : "Import"}</i>
@@ -325,9 +339,9 @@ export default function DataWorkspace({ model, baselineScenarioId, onModelChange
           <h3>Source profile and mapping</h3>
           <label>Profile<select value={profileId} onChange={event => chooseProfile(event.target.value)}><option value={definition.profile.id}>{definition.profile.label}</option>{entityProfiles.map(profile => <option key={profile.id} value={profile.id}>{profile.label} · v{profile.version}</option>)}<option value="custom">Custom mapping</option></select></label>
           <div className="mapping-fields">{Object.entries(mapping).map(([key, value]) => {
-            const options = selectOptions[key];
+            const choices = selectOptions[key];
             if (typeof value === "boolean") return <label key={key}>{key}<select value={String(value)} onChange={event => updateMapping(key, event.target.value === "true")}><option value="true">true</option><option value="false">false</option></select></label>;
-            if (options) return <label key={key}>{key}<select value={String(value ?? "")} onChange={event => updateMapping(key, event.target.value)}>{options.map(option => <option key={option} value={option}>{option}</option>)}</select></label>;
+            if (choices) return <label key={key}>{key}<select value={String(value ?? "")} onChange={event => updateMapping(key, event.target.value)}>{choices.map(option => <option key={option} value={option}>{option}</option>)}</select></label>;
             return <label key={key}>{key}<input value={String(value ?? "")} onChange={event => updateMapping(key, event.target.value)} /></label>;
           })}</div>
           <div className="save-profile"><input placeholder="Saved profile name" value={profileName} onChange={event => setProfileName(event.target.value)} /><button className="secondary" type="button" onClick={saveProfile} disabled={!profileName.trim()}>Save mapping</button></div>
