@@ -132,6 +132,38 @@ describe("Capacity Assurance API", () => {
     expect(comparison.rows.every(row => row.loadDelta === 0)).toBe(true);
   });
 
+  it("generates a standalone printable executive report", () => {
+    const response = routeApiRequest("POST", "/v1/report/decision", {
+      model: northstarRecoveryModel,
+      baselineScenarioId: "baseline",
+      comparisonScenarioId: "recovery-1",
+      format: "html",
+    });
+    expect(response.statusCode).toBe(200);
+    const report = response.body as { filename: string; mimeType: string; content: string; decision: { classification: string } };
+    expect(report.filename).toMatch(/decision\.html$/);
+    expect(report.mimeType).toContain("text/html");
+    expect(report.content).toContain("Capacity Assurance Decision Package");
+    expect(report.content).toContain("Install third heat-treatment oven");
+    expect(report.decision.classification).toMatch(/supportable|conditional|notSupportable|incomplete/);
+  });
+
+  it("generates a portable JSON assessment with the full model snapshot", () => {
+    const response = routeApiRequest("POST", "/v1/report/decision", {
+      model: northstarRecoveryModel,
+      baselineScenarioId: "baseline",
+      comparisonScenarioId: "recovery-1",
+      format: "json",
+    });
+    expect(response.statusCode).toBe(200);
+    const report = response.body as { filename: string; mimeType: string; content: string };
+    expect(report.filename).toMatch(/portable-assessment\.json$/);
+    expect(report.mimeType).toContain("application/json");
+    const portable = JSON.parse(report.content) as { assessmentSnapshot: { model: { products: unknown[] }; comparison: { appliedActionIds: string[] } } };
+    expect(portable.assessmentSnapshot.model.products).toHaveLength(4);
+    expect(portable.assessmentSnapshot.comparison.appliedActionIds).toHaveLength(3);
+  });
+
   it("rejects invalid models before calculation", () => {
     const response = routeApiRequest("POST", "/v1/calculate", {
       model: { modelId: "broken" },
