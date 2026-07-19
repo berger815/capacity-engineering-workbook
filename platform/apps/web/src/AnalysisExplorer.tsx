@@ -241,7 +241,8 @@ function LeadTimeExplorer({ model }: { model: CapacityModel }) {
   const product = model.products.find(item => item.id === productId);
   const revision = model.routingRevisions.filter(item => item.productId === productId).sort((a, b) => b.effectiveFrom.localeCompare(a.effectiveFrom))[0];
   if (!product || !revision) return <div className="chart-empty">No effective routing revision is available.</div>;
-  const phases = [...revision.phases].sort((a, b) => b.startWeeksBeforeShip - a.startWeeksBeforeShip);
+  const activeRevision = revision;
+  const phases = [...activeRevision.phases].sort((a, b) => b.startWeeksBeforeShip - a.startWeeksBeforeShip);
   const maxWeeks = Math.max(1, ...phases.map(phase => Math.max(phase.startWeeksBeforeShip, phase.endWeeksBeforeShip)));
   const width = 980;
   const rowHeight = 72;
@@ -252,7 +253,7 @@ function LeadTimeExplorer({ model }: { model: CapacityModel }) {
   const x = (weeks: number) => left + (maxWeeks - weeks) / maxWeeks * plotWidth;
   const resourceNames = Object.fromEntries(model.resourceGroups.map(group => [group.id, group.name]));
   function updatePhase(phaseId: string, field: "name" | "startWeeksBeforeShip" | "endWeeksBeforeShip" | "allocation", value: string | number) {
-    const phase = revision.phases.find(item => item.id === phaseId);
+    const phase = activeRevision.phases.find(item => item.id === phaseId);
     if (!phase) return;
     if (field === "startWeeksBeforeShip") phase.startWeeksBeforeShip = Number(value);
     else if (field === "endWeeksBeforeShip") phase.endWeeksBeforeShip = Number(value);
@@ -266,14 +267,14 @@ function LeadTimeExplorer({ model }: { model: CapacityModel }) {
       {[0, ...Array.from({ length: Math.ceil(maxWeeks / 4) }, (_, index) => Math.min(maxWeeks, (index + 1) * 4))].filter((value, index, array) => array.indexOf(value) === index).map(weeks => <g key={weeks}><line className="timeline-grid" x1={x(weeks)} x2={x(weeks)} y1="42" y2={height - 24} /><text className="timeline-axis" x={x(weeks)} y="26" textAnchor="middle">{weeks === 0 ? "Ship" : `${weeks}w`}</text></g>)}
       {phases.map((phase, index) => {
         const y = 58 + index * rowHeight;
-        const operations = revision.operations.filter(operation => operation.phaseId === phase.id);
+        const operations = activeRevision.operations.filter(operation => operation.phaseId === phase.id);
         const high = Math.max(phase.startWeeksBeforeShip, phase.endWeeksBeforeShip);
         const low = Math.min(phase.startWeeksBeforeShip, phase.endWeeksBeforeShip);
         return <g key={phase.id}><text className="timeline-phase" x="12" y={y + 18}>{phase.name}</text><text className="timeline-allocation" x="12" y={y + 36}>{phase.allocation}</text><rect className="timeline-bar" x={x(high)} y={y} width={Math.max(8, x(low) - x(high))} height="28" rx="6"><title>{`${phase.name}: ${high} to ${low} weeks before ship`}</title></rect><text className="timeline-bar-label" x={x(high) + 8} y={y + 19}>{operations.length} operation{operations.length === 1 ? "" : "s"}</text></g>;
       })}
     </svg></div></div>
     <div className="table-card"><div className="card-title-row"><div><h3>Lead-time phase settings</h3><small>Edit the current model here, then return to Calculate and rerun the baseline.</small></div></div><div className="table-wrap"><table><thead><tr><th>Phase</th><th className="number">Start weeks before ship</th><th className="number">End weeks before ship</th><th>Allocation</th></tr></thead><tbody>{phases.map(phase => <tr key={phase.id}><td><input value={phase.name} onChange={event => updatePhase(phase.id, "name", event.target.value)} /></td><td><input type="number" min="0" step="1" value={phase.startWeeksBeforeShip} onChange={event => updatePhase(phase.id, "startWeeksBeforeShip", Number(event.target.value))} /></td><td><input type="number" min="0" step="1" value={phase.endWeeksBeforeShip} onChange={event => updatePhase(phase.id, "endWeeksBeforeShip", Number(event.target.value))} /></td><td><select value={phase.allocation} onChange={event => updatePhase(phase.id, "allocation", event.target.value)}><option value="spread">Spread across phase</option><option value="shiftToStart">Shift to start</option><option value="shiftToEnd">Shift to end</option><option value="shiftToMidpoint">Shift to midpoint</option></select></td></tr>)}</tbody></table></div></div>
-    <div className="table-card route-table"><div className="card-title-row"><div><h3>Routing and resource detail</h3><small>Operations are sparse; only applicable resources appear.</small></div></div><div className="table-wrap"><table><thead><tr><th>Seq.</th><th>Operation</th><th>Lead-time phase</th><th>Resource requirement</th><th className="number">Standard</th><th>State</th></tr></thead><tbody>{[...revision.operations].sort((a, b) => a.sequence - b.sequence).flatMap(operation => operation.requirements.map(requirement => <tr key={`${operation.id}-${requirement.id}`}><td>{operation.sequence}</td><td><strong>{operation.name}</strong></td><td>{revision.phases.find(phase => phase.id === operation.phaseId)?.name ?? operation.phaseId}</td><td>{resourceNames[requirement.resourceGroupId] ?? requirement.resourceGroupId}</td><td className="number">{requirement.requirement.state === "value" ? requirement.requirement.value?.toFixed(3) : "—"}</td><td><span className={`state-pill ${requirement.requirement.state}`}>{requirement.requirement.state}</span></td></tr>))}</tbody></table></div></div>
+    <div className="table-card route-table"><div className="card-title-row"><div><h3>Routing and resource detail</h3><small>Operations are sparse; only applicable resources appear.</small></div></div><div className="table-wrap"><table><thead><tr><th>Seq.</th><th>Operation</th><th>Lead-time phase</th><th>Resource requirement</th><th className="number">Standard</th><th>State</th></tr></thead><tbody>{[...activeRevision.operations].sort((a, b) => a.sequence - b.sequence).flatMap(operation => operation.requirements.map(requirement => <tr key={`${operation.id}-${requirement.id}`}><td>{operation.sequence}</td><td><strong>{operation.name}</strong></td><td>{activeRevision.phases.find(phase => phase.id === operation.phaseId)?.name ?? operation.phaseId}</td><td>{resourceNames[requirement.resourceGroupId] ?? requirement.resourceGroupId}</td><td className="number">{requirement.requirement.state === "value" ? requirement.requirement.value?.toFixed(3) : "—"}</td><td><span className={`state-pill ${requirement.requirement.state}`}>{requirement.requirement.state}</span></td></tr>))}</tbody></table></div></div>
   </>;
 }
 
