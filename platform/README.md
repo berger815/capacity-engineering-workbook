@@ -16,9 +16,10 @@ It is not an ERP, MRP, MES, finite scheduler, dispatching system, or accounting 
 
 - `packages/domain` — vendor-neutral canonical manufacturing-capacity model and runtime validation.
 - `packages/engine` — deterministic, headless capacity and lead-time calculation engine.
-- `apps/api` — planned HTTP/API and job orchestration surface.
+- `packages/fixtures` — canonical synthetic regression and demonstration models.
+- `apps/api` — runnable HTTP validation and calculation service.
+- `database/migrations` — normalized PostgreSQL persistence contract.
 - `apps/web` — planned browser application.
-- PostgreSQL persistence and import/mapping packages will be added after the calculation slice is green.
 
 ## Modeling principles
 
@@ -30,10 +31,11 @@ It is not an ERP, MRP, MES, finite scheduler, dispatching system, or accounting 
 6. Labor, equipment, skills, tooling, space, external services, and other constraints share a common resource abstraction.
 7. Source-system identifiers are aliases; no ERP vendor owns the core model.
 8. The calculation engine is independent of UI, persistence, and integrations.
+9. Published decisions must remain reproducible through source snapshots, mapping versions, scenario versions, engine versions, and input digests.
 
 ## Current vertical slice
 
-The first slice includes:
+The working slice includes:
 
 - canonical organization, product, routing, resource, calendar, scenario, and demand entities;
 - runtime schema validation;
@@ -43,17 +45,33 @@ The first slice includes:
 - sparse routing load;
 - setup/batch load support;
 - governing-constraint identification;
-- tests for pre-shipment work, bypassed resources, holidays, and governing constraints.
+- full Northstar v2 canonical fixture with four distinct routes and 48 monthly demand records;
+- runnable HTTP endpoints for health, fixture retrieval, validation, and calculation;
+- normalized PostgreSQL migration for identity, tenancy, model entities, source lineage, mappings, calculations, results, and audit;
+- tests for pre-shipment work, bypassed resources, holidays, governing constraints, fixture integrity, validation failures, and HTTP calculation.
 
 ## Commands
 
 ```bash
 corepack enable
+cd platform
 pnpm install
-pnpm typecheck
 pnpm build
+pnpm typecheck
 pnpm test
+pnpm --filter @capacity/api start
 ```
+
+The API listens on `127.0.0.1:3000` by default. Override with `HOST` and `PORT`.
+
+## API contract
+
+- `GET /health`
+- `GET /v1/fixtures/northstar-v2`
+- `POST /v1/validate` with either a canonical model or `{ "model": ... }`
+- `POST /v1/calculate` with `{ "model": ..., "scenarioId": "..." }`
+
+All calculation input is runtime-validated before the engine executes.
 
 ## Build gates
 
@@ -63,12 +81,14 @@ Before this branch is ready to merge:
 - Northstar synthetic case is represented in the canonical schema.
 - Golden calculations reproduce the intended lead-time and routing behavior.
 - Missing and not-applicable inputs cannot silently become zero.
+- The API validates every calculation request.
+- The database migration is reviewed before deployment.
 - No changes are made to the legacy `index.html`.
 
 ## Next vertical slices
 
-1. Full Northstar fixture and golden-result assertions.
-2. PostgreSQL schema and migrations.
-3. Excel/CSV import with reusable mapping profiles.
-4. Calculation API and asynchronous jobs.
+1. Golden expected-result snapshots and deeper v6.86 reconciliation.
+2. Excel/CSV import with reusable mapping profiles and control totals.
+3. PostgreSQL repository implementation and migration CI.
+4. Asynchronous calculation/import jobs.
 5. First web workflow: import → validate → calculate → inspect constraint.
