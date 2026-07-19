@@ -45,7 +45,8 @@ export interface DemandMapping {
 export interface DemandImportPreview {
   records: CapacityModel["demand"];
   issues: Array<{
-    rowNumber: number;
+    rowNumber?: number;
+    entityKey?: string;
     severity: "error" | "warning";
     code: string;
     message: string;

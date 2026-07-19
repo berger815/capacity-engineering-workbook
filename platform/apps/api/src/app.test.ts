@@ -42,7 +42,7 @@ describe("Capacity Assurance API", () => {
   it("previews and transactionally applies a product import", () => {
     const csv = [
       "productId,productName,externalKey,productFamily,organizationNodeId",
-      "new-product,New Product,NEW,Launch,site-northstar",
+      "new-product,New Product,NEW,Launch,harbor-works",
     ].join("\n");
     const preview = routeApiRequest("POST", "/v1/import/products/preview", {
       model: northstarRecoveryModel,
@@ -68,7 +68,7 @@ describe("Capacity Assurance API", () => {
   it("blocks an invalid resource-group dependency without mutating the model", () => {
     const csv = [
       "resourceGroupId,resourceGroupName,resourceKind,capacityUnit,calendarId,organizationNodeId,pooled,tags",
-      "rg-new,New Group,labor,hours,missing-calendar,site-northstar,true,test",
+      "rg-new,New Group,labor,hours,missing-calendar,harbor-works,true,test",
     ].join("\n");
     const response = routeApiRequest("POST", "/v1/import/resource-groups/apply", {
       model: northstarRecoveryModel,
