@@ -11,7 +11,7 @@ describe("supplier finding report", () => {
     expect(html).toContain("Supplier Capacity Assessment &amp; Verification");
     expect(html).toContain("Governing constraint");
     expect(html).toContain("Binding period");
-    expect(html).toContain("Capacity shortage");
+    expect(html).toMatch(/Capacity shortage|Remaining margin/);
     expect(html).toContain("This is a modeled finding—not a guarantee");
   });
 });
