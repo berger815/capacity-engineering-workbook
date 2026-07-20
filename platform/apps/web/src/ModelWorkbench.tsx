@@ -23,9 +23,21 @@ export default function ModelWorkbench(props: ModelWorkbenchProps) {
   useEffect(() => {
     const guardNavigation = (event: MouseEvent) => {
       const element = event.target instanceof Element ? event.target : null;
-      const leavingControl = element?.closest(".step-button, .assessment-home-button");
+      const button = element?.closest("button");
+      const buttonLabel = button?.textContent?.trim();
       const unsaved = document.querySelector(".model-workbench .unsaved-banner");
-      if (!leavingControl || !unsaved) return;
+      if (!unsaved) return;
+
+      if (buttonLabel === "Save assessment file") {
+        window.alert("Save or discard the Workbench changes before downloading the assessment file.");
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        return;
+      }
+
+      const leavingControl = element?.closest(".step-button") || buttonLabel === "Assessment home";
+      if (!leavingControl) return;
       if (!window.confirm("Discard unsaved Workbench changes?")) {
         event.preventDefault();
         event.stopPropagation();
