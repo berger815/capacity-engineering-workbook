@@ -57,6 +57,19 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Typecheck
-        run: pnpm typecheck
+        id: typecheck
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee typecheck.log
+      - name: Upload typecheck diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workbench-typecheck
+          path: platform/typecheck.log
+      - name: Enforce typecheck
+        if: steps.typecheck.outcome == 'failure'
+        run: exit 1
       - name: Test
         run: pnpm test
