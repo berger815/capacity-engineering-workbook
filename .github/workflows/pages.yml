@@ -35,11 +35,11 @@ jobs:
       - name: Install dependencies
         working-directory: platform
         run: pnpm install --no-frozen-lockfile
-      - name: Build browser-only Assessment Studio
+      - name: Build local assessment application
         working-directory: platform
         run: pnpm build
         env:
-          VITE_STATIC_DEMO: "true"
+          VITE_LOCAL_ASSESSMENT: "true"
           VITE_BASE_PATH: "/capacity-engineering-workbook/"
       - name: Preserve the legacy workbook
         run: |
