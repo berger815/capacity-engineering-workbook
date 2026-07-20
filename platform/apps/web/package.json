@@ -16,9 +16,9 @@
     "@capacity/fixtures": "workspace:*",
     "@capacity/importer": "workspace:*",
     "@capacity/reporting": "workspace:*",
+    "exceljs": "^4.4.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "xlsx": "^0.18.5"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.8",
