@@ -3,6 +3,15 @@ import { northstarRecoveryModel } from "@capacity/fixtures";
 import { calculateCapacity } from "./index.js";
 import { explainConstraint } from "./explain.js";
 
+const appliedRecoveryActions = [
+  "action-weld-cross-train",
+  "action-heat-overflow",
+  "action-add-positioners",
+  "action-weld-hiring",
+  "action-add-assembly",
+  "action-add-test-stand",
+];
+
 function loadedRow(scenarioId: string) {
   const calculation = calculateCapacity(northstarRecoveryModel, scenarioId);
   const row = calculation.results
@@ -58,11 +67,7 @@ describe("constraint explanation", () => {
     );
 
     expect(explanation.demandSourceScenarioId).toBe("baseline");
-    expect(explanation.appliedActionIds).toEqual([
-      "action-add-oven",
-      "action-weld-overtime",
-      "action-add-test-stand",
-    ]);
+    expect(explanation.appliedActionIds).toEqual(appliedRecoveryActions);
     expect(explanation.totalExplainedLoad).toBeCloseTo(row.load, 8);
   });
 });
