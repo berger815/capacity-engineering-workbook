@@ -1,3 +1,4 @@
+import { writeFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { northstarRecoveryModel } from "@capacity/fixtures";
 import { calculateCapacity, compareCapacityScenarios } from "./index.js";
@@ -37,7 +38,7 @@ function peak(result: ReturnType<typeof calculateCapacity>, resourceGroupId: str
 }
 
 describe("Northstar golden diagnostic", () => {
-  it("prints the current deterministic control values", () => {
+  it("captures the current deterministic control values", () => {
     const baseline = calculateCapacity(northstarRecoveryModel, "baseline");
     const comparison = compareCapacityScenarios(northstarRecoveryModel, "baseline", "recovery-1");
     const normalizedComparison = {
@@ -81,7 +82,7 @@ describe("Northstar golden diagnostic", () => {
         firstPeriod: preRampRows.map(row => row.periodStart).sort()[0] ?? null,
       },
     };
-    console.log(`GOLDEN_DIAGNOSTIC=${JSON.stringify(diagnostic)}`);
+    writeFileSync("/tmp/golden-diagnostic.json", JSON.stringify(diagnostic, null, 2));
     expect(preRampRows.length).toBeGreaterThan(0);
   });
 });
