@@ -5,12 +5,6 @@ on:
     paths:
       - "platform/**"
       - ".github/workflows/platform-ci.yml"
-  push:
-    branches:
-      - "platform/**"
-    paths:
-      - "platform/**"
-      - ".github/workflows/platform-ci.yml"
 
 jobs:
   validate:
@@ -53,10 +47,18 @@ jobs:
             echo "Applying ${migration}"
             psql --host 127.0.0.1 --username postgres --dbname capacity_assurance_test --set ON_ERROR_STOP=1 --file "${migration}"
           done
-          psql --host 127.0.0.1 --username postgres --dbname capacity_assurance_test --set ON_ERROR_STOP=1 --command "SELECT to_regclass('public.scenario_actions') AS scenario_actions, to_regclass('public.calculation_run_actions') AS calculation_run_actions;"
       - name: Build
         run: pnpm build
       - name: Typecheck
         run: pnpm typecheck
       - name: Test
         run: pnpm test
+      - name: Upload reconciliation source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: enterprise-reconciliation-source
+          path: |
+            platform/packages/engine/src/index.ts
+            platform/packages/domain/src/schema.ts
+          if-no-files-found: error
