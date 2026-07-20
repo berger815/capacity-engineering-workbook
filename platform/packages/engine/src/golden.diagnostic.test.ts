@@ -6,9 +6,7 @@ import { calculateCapacity, compareCapacityScenarios } from "./index.js";
 function checksum(value: unknown): string {
   const text = JSON.stringify(value);
   let hash = 2166136261;
-  for (let index = 0; index < text.length; index += 1) {
-    hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
-  }
+  for (let index = 0; index < text.length; index += 1) hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
@@ -31,10 +29,14 @@ function annualUtilization(result: ReturnType<typeof calculateCapacity>, resourc
   return capacity > 0 ? load / capacity : null;
 }
 
-function peak(result: ReturnType<typeof calculateCapacity>, resourceGroupId: string) {
+function peak(result: ReturnType<typeof calculateCapacity>, resourceGroupId: string, year?: string) {
   return result.results
-    .filter(row => row.resourceGroupId === resourceGroupId)
+    .filter(row => row.resourceGroupId === resourceGroupId && (!year || row.periodStart.startsWith(year)))
     .sort((left, right) => (right.utilization ?? -1) - (left.utilization ?? -1))[0] ?? null;
+}
+
+function period(result: ReturnType<typeof calculateCapacity>, resourceGroupId: string, periodStart: string) {
+  return result.results.find(row => row.resourceGroupId === resourceGroupId && row.periodStart === periodStart) ?? null;
 }
 
 describe("Northstar golden diagnostic", () => {
@@ -54,6 +56,7 @@ describe("Northstar golden diagnostic", () => {
       appliedActionIds: comparison.appliedActionIds,
     };
     const preRampRows = baseline.results.filter(row => row.periodStart.startsWith("2026-") && row.load > 0);
+    const resourceIds = ["rg-weld", "rg-positioner", "rg-assembly", "rg-test"];
     const diagnostic = {
       baselineChecksum: checksum(normalizedCalculation(baseline)),
       comparisonChecksum: checksum(normalizedComparison),
@@ -64,18 +67,10 @@ describe("Northstar golden diagnostic", () => {
         remainingGapPeriods: comparison.remainingGapPeriods,
         worsenedGapPeriods: comparison.worsenedGapPeriods,
       },
-      annual2027: {
-        weld: annualUtilization(baseline, "rg-weld", "2027"),
-        positioner: annualUtilization(baseline, "rg-positioner", "2027"),
-        assembly: annualUtilization(baseline, "rg-assembly", "2027"),
-        test: annualUtilization(baseline, "rg-test", "2027"),
-      },
-      peaks: {
-        weld: peak(baseline, "rg-weld"),
-        positioner: peak(baseline, "rg-positioner"),
-        assembly: peak(baseline, "rg-assembly"),
-        test: peak(baseline, "rg-test"),
-      },
+      annual2027: Object.fromEntries(resourceIds.map(id => [id, annualUtilization(baseline, id, "2027")])),
+      peak2027: Object.fromEntries(resourceIds.map(id => [id, peak(baseline, id, "2027")])),
+      october2027: Object.fromEntries(resourceIds.map(id => [id, period(baseline, id, "2027-10-01")])),
+      allHorizonPeaks: Object.fromEntries(resourceIds.map(id => [id, peak(baseline, id)])),
       preRamp: {
         nonzeroRows: preRampRows.length,
         totalLoad: preRampRows.reduce((sum, row) => sum + row.load, 0),
