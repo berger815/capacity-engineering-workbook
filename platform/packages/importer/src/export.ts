@@ -1,8 +1,12 @@
 import type { CapacityModel, RequirementValue } from "@capacity/domain";
 
+function spreadsheetSafeText(value: string): string {
+  return /^\s*[=+\-@]/.test(value) ? `'${value}` : value;
+}
+
 function cell(value: string | number | boolean | undefined): string {
   if (value === undefined) return "";
-  const text = String(value);
+  const text = typeof value === "string" ? spreadsheetSafeText(value) : String(value);
   return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
