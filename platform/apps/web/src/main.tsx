@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.js";
+import FieldApp from "./FieldApp.js";
 import "./styles.css";
 import "./recovery.css";
 import "./exports.css";
@@ -12,6 +12,6 @@ if (!root) throw new Error("Application root was not found");
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <FieldApp />
   </StrictMode>,
 );
