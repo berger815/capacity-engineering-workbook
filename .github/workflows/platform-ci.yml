@@ -57,6 +57,12 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Typecheck
-        run: pnpm typecheck
+        run: pnpm typecheck 2>&1 | tee typecheck.log
+      - name: Upload typecheck diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typecheck-diagnostics
+          path: platform/typecheck.log
       - name: Test
         run: pnpm test
